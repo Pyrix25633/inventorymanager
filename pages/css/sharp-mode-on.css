@@ -1,0 +1,22 @@
+div.navbar {
+    border-radius: 4px;
+}
+
+button, input {
+    border-radius: 2px;
+}
+
+img.rounded {
+    border-radius: 5%;
+}
+
+div.panel {
+    border-radius: 10px;
+}
+
+div.slider {
+    border-radius: 5px;
+}
+div.slider div.slider-circle {
+    border-radius: 10%;
+}
