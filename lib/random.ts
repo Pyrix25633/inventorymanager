@@ -14,6 +14,10 @@ export function generateUserToken(username: string, email: string, passwordHash:
     return hash(username + '.' + email + '@' + passwordHash + '#' + Date.now() + '&' + randomInt(1000000));
 }
 
+export function encodeSvgToBase64(svg: string): string {
+    return 'data:image/svg+xml;base64,' + Buffer.from(svg).toString('base64');
+}
+
 export function generateTfaToken(userId: number, pendingTfas: { [index: string]: number; }): string {
     const pendingTfaKeys = Object.keys(pendingTfas);
     for(const t of pendingTfaKeys)
