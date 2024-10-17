@@ -14,6 +14,7 @@ export async function getRegisterUsernameFeedback(req: Request, res: Response): 
             feedback = inUse ? 'Username already taken!' : 'Valid Username';
         } catch(e: any) {
             const username = getString(req.query.username);
+            console.log(e);
             if(username.length < 3)
                 feedback = 'Username too short!';
             else if(username.length > 32)
