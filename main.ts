@@ -135,3 +135,7 @@ main.get('/settings', (req: Request, res: Response): void => {
 main.get('/', (req: Request, res: Response): void => {
     res.sendFile(path.resolve(__dirname, './pages/index.html'));
 });
+
+main.get('/error', (req: Request, res: Response): void => {
+    res.sendFile(path.resolve(__dirname, './pages/error.html'));
+});

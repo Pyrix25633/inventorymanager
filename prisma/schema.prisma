@@ -23,4 +23,55 @@ model User {
   token           String  @db.Char(128)
   sessionDuration Int     @default(14) @db.TinyInt
   tfaKey          String? @db.Char(52)
+
+  product Product[]
+  food Food[]
+  series Series[]
+  book Book[]
+}
+
+enum UnitOfMeasurement {
+  PIECES
+  GRAMS
+}
+
+model Product {
+  id                       Int               @id @default(autoincrement())
+  user                     User              @relation(fields: [userId], references: [id])
+  userId                   Int
+  name                     String            @db.VarChar(32)
+  defaultQuantity          Int               @db.UnsignedSmallInt
+  defaultUnitOfMeasurement UnitOfMeasurement
+
+  food Food[]
+}
+
+model Food {
+  id                Int               @id @default(autoincrement())
+  user              User              @relation(fields: [userId], references: [id])
+  userId            Int
+  product           Product           @relation(fields: [productId], references: [id])
+  productId         Int
+  initialQuantity   Int               @db.UnsignedSmallInt
+  currentQuantity   Int               @db.UnsignedSmallInt
+  unitOfMeasurement UnitOfMeasurement
+  expiration        DateTime          @db.Date
+}
+
+model Series {
+  id                       Int               @id @default(autoincrement())
+  user                     User              @relation(fields: [userId], references: [id])
+  userId                   Int
+  name                     String            @db.VarChar(32)
+
+  book Book[]
+}
+
+model Book {
+  id       Int    @id @default(autoincrement())
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int
+  series   Series @relation(fields: [seriesId], references: [id])
+  seriesId Int
+  number   String @db.VarChar(16)
 }

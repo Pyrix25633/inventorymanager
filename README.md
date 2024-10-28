@@ -1,2 +1,3 @@
-# Food Manager
-A web application to know which products are about to expire and where they are
+# Inventory Manager
+
+A web application to know which food and books you have and where they are

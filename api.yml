@@ -1,18 +1,17 @@
 openapi: 3.0.2
 info:
-  description: A web application to know which products are about to expire and where they are
+  description: A web application to know which food and books you have and where they are
   version: 1.0.0
-  title: Food Manager
+  title: Inventory Manager
   contact:
     email: biral.mattia@gmail.com
   license:
     name: GPL-3.0
     url: https://www.gnu.org/licenses/gpl-3.0.en.html
 servers:
-  - url: https://foodmanager.ddns.net/api/
-  - url: https://foodmanager.my.to/api/
-  - url: https://foodmanager.us.to/api/
-  - url: https://foodmanager.8bit.ca/api/
+  - url: https://inventorymanager.ddns.net/api/
+  - url: https://inventorymanager.my.to/api/
+  - url: https://inventorymanager.8bit.ca/api/
 tags:
   - name: feedbacks
     description: Handles form feedbacks

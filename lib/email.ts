@@ -21,7 +21,7 @@ function sendEmail(mailOptions: Mail.Options, callback?: (err: Error | null) => 
 export function sendVerificationCode(email: string, tempUser: TempUser): void {
     sendEmail({
         to: email,
-        subject: 'Simply Chat Verification Code',
+        subject: 'Inventory Manager Verification Code',
         text: 'Your Verification Code for Username ' + tempUser.username + ' is ' + tempUser.verificationCode + '.',
         html: 'Your Verification Code for Username ' + tempUser.username + ' is ' + tempUser.verificationCode + '.<br>' +
             'Click <a href=https://"' + settings.https.hostname + '/temp-users/' + tempUser.username + '/confirm?verificationCode=' + tempUser.verificationCode +
@@ -32,14 +32,14 @@ export function sendVerificationCode(email: string, tempUser: TempUser): void {
 
 export function sendSecurityNotification(type: 'login' | 'settings', user: User, req: Request): void {
     const loginSettingsLine = type == 'login' ?
-        ('A new Login to your Simply Chat Account (' + user.username + ') has been detected!\n') :
+        ('A new Login to your Inventory Manager Account (' + user.username + ') has been detected!\n') :
         ('Your Account (' + user.username + ') Settings have been modified!\n');
     const tfaLine = user.tfaKey == null ?
         'We recommend that you turn on Two Factor Authentication!\n' :
         'Two Factor Authentication is already active!\n';
     sendEmail({
         to: user.email,
-        subject: 'Simply Chat Security Notification',
+        subject: 'Inventory Manager Security Notification',
         text: loginSettingsLine +
             'If it was you, you don\'t need to do anything. If not, you should take action.\n' +
             tfaLine +

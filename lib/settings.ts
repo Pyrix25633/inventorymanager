@@ -9,7 +9,7 @@ export const settings = {
         upgradePort: 8080
     },
     jwt: {
-        cookieName: "foodmanager-auth",
+        cookieName: "inventorymanager-auth",
         password: "",
         algorithm: "HS512"
     },
@@ -25,7 +25,7 @@ export const settings = {
         port: 465,
         secure: true,
         auth: {
-            user: "foodmanager@zohomail.eu",
+            user: "simplychat@zohomail.eu",
             pass: ""
         }
     },

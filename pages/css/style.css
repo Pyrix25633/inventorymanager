@@ -5,9 +5,9 @@
     --color-error: #F54F47;
     --color-warning: #F3E63D;
     --color-success: #71E0AE;
-    --color-foodmanager: #40AF8E;
-    --color-foodmanager-transparent: #40AF8E70;
-    --color-foodmanager-dark: #1e5847;
+    --color-inventorymanager: #40AF8E;
+    --color-inventorymanager-transparent: #40AF8E70;
+    --color-inventorymanager-dark: #1e5847;
 }
 
 * {
@@ -52,7 +52,7 @@ input {
 button {
     display: flex;
     border: 0;
-    background-color: var(--color-foodmanager);
+    background-color: var(--color-inventorymanager);
     color: var(--color-background);
     font-weight: bold;
     align-items: center;
@@ -63,7 +63,7 @@ img.button {
     cursor: pointer;
 }
 input:focus {
-    border-color: var(--color-foodmanager);
+    border-color: var(--color-inventorymanager);
     outline: none;
 }
 input:-webkit-autofill {
@@ -99,12 +99,12 @@ span.title {
     line-height: 30px;
     letter-spacing: -1px;
 }
-span.foodmanager-color {
-    color: var(--color-foodmanager);
+span.inventorymanager-color {
+    color: var(--color-inventorymanager);
 }
 
 a {
-    color: var(--color-foodmanager);
+    color: var(--color-inventorymanager);
 }
 
 .error {
@@ -140,7 +140,7 @@ nav#navbar {
     z-index: 100;
 }
 div.navbar {
-    background-color: var(--color-foodmanager-dark);
+    background-color: var(--color-inventorymanager-dark);
 }
 
 div#footer {

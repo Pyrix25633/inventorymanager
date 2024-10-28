@@ -1,7 +1,7 @@
 {
-  "name": "foodmanager",
+  "name": "inventorymanager",
   "version": "1.0.0",
-  "description": "A web application to know which products are about to expire and where they are",
+  "description": "A web application to know which food and books you have and where they are",
   "main": "main.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,18 +9,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "github.com/Pyrix25633/foodmanager"
+    "url": "github.com/Pyrix25633/inventorymanager"
   },
   "keywords": [
     "food",
-    "expiration"
+    "expiration",
+    "books",
+    "library"
   ],
   "author": "Pyrix25633",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/Pyrix25633/simplychat/issues"
+    "url": "https://github.com/Pyrix25633/inventorymanager/issues"
   },
-  "homepage": "https://github.com/Pyrix25633/simplychat",
+  "homepage": "https://github.com/Pyrix25633/inventorymanager",
   "dependencies": {
     "@prisma/client": "^5.20.0",
     "@types/bcrypt": "^5.0.2",
