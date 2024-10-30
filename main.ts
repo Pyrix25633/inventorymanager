@@ -8,7 +8,8 @@ import http from 'http';
 import https from 'https';
 import path from 'path';
 import { getTfaGenerateKey, getTfaValidateCode, getValidateToken, postLogin, postLoginTfa, postLogout, postRegenerateToken } from './lib/api/auth';
-import { getConfirmUsernameFeedback, getLoginUsernameFeedback, getRegisterEmailFeedback, getRegisterUsernameFeedback } from './lib/api/feedbacks';
+import { getConfirmUsernameFeedback, getLocationNameFeedback, getLoginUsernameFeedback, getRegisterEmailFeedback, getRegisterUsernameFeedback } from './lib/api/feedbacks';
+import { postLocation } from './lib/api/locations';
 import { getSettings, getSettingsCustomization, getSettingsId, patchSettings } from './lib/api/settings';
 import { postTempUser, postTempUserConfirm } from './lib/api/temp-users';
 import { settings } from './lib/settings';
@@ -55,6 +56,8 @@ main.get('/api/feedbacks/confirm-username', getConfirmUsernameFeedback);
 
 main.get('/api/feedbacks/login-username', getLoginUsernameFeedback);
 
+main.get('/api/feedbacks/location-name', getLocationNameFeedback);
+
 // temp-users //
 
 main.post('/api/temp-users', postTempUser);
@@ -86,6 +89,10 @@ main.patch('/api/settings', patchSettings);
 main.get('/api/settings/customization', getSettingsCustomization);
 
 main.get('/api/settings/id', getSettingsId);
+
+// locations //
+
+main.post('/api/locations', postLocation);
 
 // --server-- //
 
@@ -138,4 +145,8 @@ main.get('/', (req: Request, res: Response): void => {
 
 main.get('/error', (req: Request, res: Response): void => {
     res.sendFile(path.resolve(__dirname, './pages/error.html'));
+});
+
+main.get('/locations/create', (req: Request, res: Response): void => {
+    res.sendFile(path.resolve(__dirname, './pages/location-create.html'));
 });

@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
+import { isLocationNameInUse } from "../database/location";
 import { isTempUserEmailInUse, isTempUserUsernameInUse } from "../database/temp-user";
 import { isUserEmailInUse, isUserUsernameInUse } from "../database/user";
-import { getEmail, getUsername } from "../validation/semantic-validation";
+import { getEmail, getName, getUsername } from "../validation/semantic-validation";
 import { getString } from "../validation/type-validation";
 import { Ok, handleException } from "../web/response";
+import { validateToken } from "./auth";
 
 export async function getRegisterUsernameFeedback(req: Request, res: Response): Promise<void> {
     try {
@@ -14,7 +16,6 @@ export async function getRegisterUsernameFeedback(req: Request, res: Response): 
             feedback = inUse ? 'Username already taken!' : 'Valid Username';
         } catch(e: any) {
             const username = getString(req.query.username);
-            console.log(e);
             if(username.length < 3)
                 feedback = 'Username too short!';
             else if(username.length > 32)
@@ -69,6 +70,27 @@ export async function getLoginUsernameFeedback(req: Request, res: Response): Pro
             feedback = inUse ? 'Valid Username' : 'No Users found with specified Username!';
         } catch(e: any) {
             feedback = 'Invalid Username!';
+        }
+        new Ok({feedback: feedback}).send(res);
+    } catch(e: any) {
+        handleException(e, res);
+    }
+}
+
+export async function getLocationNameFeedback(req: Request, res: Response): Promise<void> {
+    try {
+        const user = await validateToken(req);
+        let feedback: string;
+        try {
+            const name = getName(req.query.name);
+            const inUse = await isLocationNameInUse(user.id, name);
+            feedback = inUse ? 'Name already used!' : 'Valid Name';
+        } catch(e: any) {
+            const name = getString(req.query.name);
+            if(name.length < 3)
+                feedback = 'Name too short!';
+            else
+                feedback = 'Name too long!';
         }
         new Ok({feedback: feedback}).send(res);
     } catch(e: any) {

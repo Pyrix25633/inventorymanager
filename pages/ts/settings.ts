@@ -8,7 +8,6 @@ const idInfoSpan = new InfoSpan('Id:');
 const usernameInput = new ApiFeedbackInput('username', 'text', 'Username:', 'You can change your Username', '/api/feedbacks/register-username');
 const emailInput = new ApiFeedbackInput('email', 'text', 'Email:', 'You can change your Email', '/api/feedbacks/register-email');
 
-
 class InfoSection extends InputSection {
     constructor() {
         super('Info', [idInfoSpan, usernameInput, emailInput]);

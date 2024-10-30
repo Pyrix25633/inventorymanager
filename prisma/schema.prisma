@@ -24,10 +24,22 @@ model User {
   sessionDuration Int     @default(14) @db.TinyInt
   tfaKey          String? @db.Char(52)
 
-  product Product[]
+  locations Location[]
+  products Product[]
   food Food[]
   series Series[]
-  book Book[]
+  books Book[]
+}
+
+model Location {
+  id     Int    @id @default(autoincrement())
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int
+  name   String @db.VarChar(32)
+
+  @@unique([userId, name])
+
+  products Product[]
 }
 
 enum UnitOfMeasurement {
@@ -42,6 +54,10 @@ model Product {
   name                     String            @db.VarChar(32)
   defaultQuantity          Int               @db.UnsignedSmallInt
   defaultUnitOfMeasurement UnitOfMeasurement
+  defaultLocation          Location          @relation(fields: [defaultLocationId], references: [id])
+  defaultLocationId        Int
+
+  @@unique([userId, name])
 
   food Food[]
 }
@@ -59,10 +75,12 @@ model Food {
 }
 
 model Series {
-  id                       Int               @id @default(autoincrement())
-  user                     User              @relation(fields: [userId], references: [id])
-  userId                   Int
-  name                     String            @db.VarChar(32)
+  id     Int    @id @default(autoincrement())
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int
+  name   String @db.VarChar(32)
+
+  @@unique([userId, name])
 
   book Book[]
 }

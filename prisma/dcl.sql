@@ -1,6 +1,11 @@
 -- ! Modify .env to use root user when executing the 'npx prisma db push' command
 
-CREATE USER 'FoodManager'@'localhost' IDENTIFIED BY 'FoodManager@Mini25633';
+CREATE USER 'InventoryManager'@'localhost' IDENTIFIED BY 'InventoryManager@Mini25633';
 
-GRANT SELECT, INSERT, DELETE ON TempUser TO 'FoodManager'@'localhost';
-GRANT SELECT, INSERT, UPDATE ON User TO 'FoodManager'@'localhost';
+GRANT SELECT, INSERT, DELETE ON TempUser TO 'InventoryManager'@'localhost';
+GRANT SELECT, INSERT, UPDATE ON User TO 'InventoryManager'@'localhost';
+GRANT SELECT, INSERT, UPDATE ON Location TO 'InventoryManager'@'localhost';
+GRANT SELECT, INSERT, UPDATE ON Product TO 'InventoryManager'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON Food TO 'InventoryManager'@'localhost';
+GRANT SELECT, INSERT, UPDATE ON Series TO 'InventoryManager'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON Book TO 'InventoryManager'@'localhost';
