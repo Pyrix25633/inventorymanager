@@ -1,0 +1,19 @@
+table {
+    border-collapse: collapse;
+}
+thead {
+    border-bottom: 2px solid var(--color-foreground);
+}
+tfoot {
+    border-top: 2px solid var(--color-foreground);
+}
+tr:nth-child(even) td {
+    background-color: var(--color-background);
+}
+th.group {
+    border-right: 2px solid var(--color-foreground);
+    border-left: 2px solid var(--color-foreground);
+}
+td {
+    text-align: center;
+}

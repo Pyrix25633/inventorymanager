@@ -60,7 +60,7 @@ export function getTfaKey(raw: any): string {
 
 export function getName(raw: any): string {
     const parsed = getString(raw);
-    if(parsed.length < 3 || parsed.length > 64)
+    if(parsed.length < 3 || parsed.length > 32)
         throw new BadRequest();
     return parsed;
 }

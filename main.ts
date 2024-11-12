@@ -9,7 +9,7 @@ import https from 'https';
 import path from 'path';
 import { getTfaGenerateKey, getTfaValidateCode, getValidateToken, postLogin, postLoginTfa, postLogout, postRegenerateToken } from './lib/api/auth';
 import { getConfirmUsernameFeedback, getLocationNameFeedback, getLoginUsernameFeedback, getRegisterEmailFeedback, getRegisterUsernameFeedback } from './lib/api/feedbacks';
-import { postLocation } from './lib/api/locations';
+import { getLocation, getLocations, postLocation } from './lib/api/locations';
 import { getSettings, getSettingsCustomization, getSettingsId, patchSettings } from './lib/api/settings';
 import { postTempUser, postTempUserConfirm } from './lib/api/temp-users';
 import { settings } from './lib/settings';
@@ -92,7 +92,11 @@ main.get('/api/settings/id', getSettingsId);
 
 // locations //
 
+main.get('/api/locations', getLocations);
+
 main.post('/api/locations', postLocation);
+
+main.get('/api/locations/:locationId', getLocation);
 
 // --server-- //
 
@@ -145,6 +149,10 @@ main.get('/', (req: Request, res: Response): void => {
 
 main.get('/error', (req: Request, res: Response): void => {
     res.sendFile(path.resolve(__dirname, './pages/error.html'));
+});
+
+main.get('/locations', (req: Request, res: Response): void => {
+    res.sendFile(path.resolve(__dirname, './pages/locations.html'));
 });
 
 main.get('/locations/create', (req: Request, res: Response): void => {

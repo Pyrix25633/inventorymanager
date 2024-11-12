@@ -53,6 +53,13 @@ button {
     gap: 2px;
 }
 
+tr:not(:first-child){
+    margin-top: 2px;
+}
+th, td {
+    padding: 1px 5px;
+}
+
 @media screen and (max-width: 850px) {
     div.panel {
         padding: 15px;

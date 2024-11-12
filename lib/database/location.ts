@@ -1,5 +1,5 @@
 import { Location } from "@prisma/client";
-import { UnprocessableContent } from "../web/response";
+import { NotFound, UnprocessableContent } from "../web/response";
 import { prisma } from "./prisma";
 
 export async function isLocationNameInUse(userId: number, name: string): Promise<boolean> {
@@ -22,4 +22,27 @@ export async function createLocation(userId: number, name: string): Promise<Loca
     } catch(e: any) {
         throw new UnprocessableContent();
     }
+}
+
+export async function findLocations(userId: number, orderBy: { [index: string]: string; } | undefined = undefined): Promise<{ id: number; name: string; }[]> {
+    return prisma.location.findMany({
+        select: {
+            id: true,
+            name: true
+        },
+        where: {
+            userId: userId
+        },
+        orderBy: orderBy
+    });
+}
+
+export async function findLocation(id: number): Promise<Location> {
+    const location: Location | null = await prisma.location.findUnique({
+        where: {
+            id: id
+        }
+    });
+    if(location == null) throw new NotFound();
+    return location;
 }

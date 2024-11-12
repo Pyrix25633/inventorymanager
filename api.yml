@@ -21,6 +21,8 @@ tags:
     description: Handles user authentication
   - name: settings
     description: Handles user settings
+  - name: locations
+    description: Handles locations
 components:
   securitySchemes:
     cookieAuth:
@@ -88,6 +90,10 @@ components:
     base64Image:
       type: string
       example: "data:image/svg+xml;base64,czY0OGI0bmcxNjViMjYrc3NjNDF2ZjJhKzR3ZjF2Y2EyYSsx..."
+    name:
+      type: string
+      minLength: 3
+      maxLength: 32
 paths:
   /feedbacks/register-username:
     get:
@@ -191,6 +197,33 @@ paths:
                   feedback:
                     type: string
                     example: Valid Username
+        "400":
+          description: Bad Request
+  /feedbacks/location-name:
+    get:
+      tags:
+        - feedbacks
+      summary: Location name feedback for the location creation form
+      description: Returns a user friendly location name feedback
+      operationId: feedbacks/location-name
+      parameters:
+        - in: query
+          name: name
+          schema:
+            $ref: "#/components/schemas/name"
+          description: The location name
+          required: true
+      responses:
+        "200":
+          description: Location name feedback
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  feedback:
+                    type: string
+                    example: Valid Name
         "400":
           description: Bad Request
   /temp-users:
@@ -555,3 +588,81 @@ paths:
                 $ref: "#/components/schemas/customization"
         "401":
           description: Unauthorized
+  /locations:
+    get:
+      tags:
+        - locations
+      summary: Gets all locations
+      description: Returns all locations owned by the user
+      responses:
+        "200":
+          description: All locations of which the user is owner
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chats:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          $ref: "#/components/schemas/id"
+                        name:
+                          $ref: "#/components/schemas/name"
+        "401":
+          description: Unauthorized
+    post:
+      tags:
+        - locations
+      summary: Creates a new location
+      description: Creates a new location
+      operationId: locations(post)
+      responses:
+        "201":
+          description: Location created succesfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    $ref: "#/components/schemas/id"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "422":
+          description: "Unprocessable Content: location cannot be created"
+  /locations/{locationId}:
+    get:
+      tags:
+        - locations
+      summary: Gets location name
+      description: Returns an object with name
+      operationId: locations/[locationId]
+      parameters:
+        - in: path
+          name: locationId
+          schema:
+            $ref: "#/components/schemas/id"
+          required: true
+      responses:
+        "200":
+          description: Name
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    $ref: "#/components/schemas/name"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: "Forbidden: requesting user does not own requested location"
+        "404":
+          description: "Not Found: no locations found with specified locationId"
