@@ -1,9 +1,6 @@
 import { RequireNonNull, defaultStatusCode } from "./utils.js";
 
-type Order = {
-    column: string;
-    ascending: boolean;
-}
+type Order = { [index: string]: 'asc' | 'desc' | undefined; };
 
 export abstract class Table {
     private readonly url: string;
@@ -34,7 +31,8 @@ export abstract class Table {
         this.headersRow = document.createElement('tr');
         head.appendChild(this.headersRow);
         this.headers = headers;
-        this.order = { column: headers[0].column, ascending: true };
+        this.order = {};
+        this.order[headers[0].column] = 'asc';
         for(const header of headers)
             header.appendTo(this);
         this.groups = groups;
@@ -87,10 +85,13 @@ export abstract class Table {
     }
 
     public update(): void {
+        const data: { page: undefined | number; order: Order; } = { page: undefined, order: this.order };
+        if(this.footer != null)
+            data.page = this.page;
         $.ajax({
             url: this.url,
             method: 'GET',
-            data: { page: this.page, order: this.order },
+            data: data,
             contentType: 'application/json',
             success: (res: { pages: number; [index: string]: any; }): void => {
                 this.footer?.update(new PageHelper(this.page, res.pages));
@@ -99,11 +100,6 @@ export abstract class Table {
                     const row = this.parseElement(element);
                     row.appendTo(this);
                 }
-                // Fix for weird FireFox rendering bug
-                $('#table').hide();
-                setTimeout((): void => {
-                    $('#table').show();
-                }, 250);
             },
             statusCode: defaultStatusCode
         });
@@ -151,10 +147,7 @@ export class TableHeader extends GenericTableHeader {
             this.updateOrderImg(table.getOrder());
             this.orderImg.addEventListener('click', (): void => {
                 let order = table.getOrder();
-                if(order.column == this.column)
-                    order = { column: order.column, ascending: !order.ascending };
-                else
-                    order = { column: this.column, ascending: true };
+                order[this.column] = order[this.column] == undefined ? 'asc' : (order[this.column] == 'asc' ? 'desc' : undefined);
                 table.setOrder(order);
             });
         }
@@ -166,7 +159,7 @@ export class TableHeader extends GenericTableHeader {
     }
 
     public updateOrderImg(order: Order): void {
-        this.orderImg.src = '/img/order' + (order.column == this.column ? '-' + (order.ascending ? 'ascending' : 'descending') : '') + '.svg';
+        this.orderImg.src = '/img/order' + (order[this.column] != undefined ? '-' + (order[this.column] == 'asc' ? 'ascending' : 'descending') : '') + '.svg';
     }
 }
 
@@ -270,13 +263,17 @@ export class IconLinkTableData extends TableData<number> {
 
     public createTd(): HTMLTableCellElement {
         const td = document.createElement('td');
-        const a = document.createElement('a');
+        const div = document.createElement('div');
+        div.classList.add('container');
         const img = document.createElement('img');
+        img.classList.add('button');
         img.alt = 'Link Icon';
         img.src = this.src;
-        a.appendChild(img);
-        a.href = this.href.replace('{id}', this.value?.toString() ?? '');
-        td.appendChild(a);
+        img.addEventListener('click', () => {
+            window.location.href = this.href.replace('{id}', this.value?.toString() ?? '');
+        });
+        div.appendChild(img);
+        td.appendChild(div);
         return td;
     }
 }

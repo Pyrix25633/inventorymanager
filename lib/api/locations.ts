@@ -1,17 +1,15 @@
 import { Request, Response } from "express";
 import { createLocation, findLocation, findLocations } from "../database/location";
-import { getName } from "../validation/semantic-validation";
-import { getInt, getObject } from "../validation/type-validation";
+import { getName, getOrder } from "../validation/semantic-validation";
+import { getInt, getObject, getOrUndefined } from "../validation/type-validation";
 import { Created, Forbidden, handleException, Ok } from "../web/response";
 import { validateToken } from "./auth";
 
 export async function getLocations(req: Request, res: Response): Promise<void> {
     try {
         const user = await validateToken(req);
-        //ordering
-        //modify query in table class to use asc/desc and no page
-        console.log(req.query);
-        const locations = await findLocations(user.id);
+        const order = getOrUndefined(req.query.order, getOrder);
+        const locations = await findLocations(user.id, order);
         new Ok({ locations: locations }).send(res);
     } catch(e: any) {
         handleException(e, res);

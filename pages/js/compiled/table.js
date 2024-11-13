@@ -16,7 +16,8 @@ export class Table {
         this.headersRow = document.createElement('tr');
         head.appendChild(this.headersRow);
         this.headers = headers;
-        this.order = { column: headers[0].column, ascending: true };
+        this.order = {};
+        this.order[headers[0].column] = 'asc';
         for (const header of headers)
             header.appendTo(this);
         this.groups = groups;
@@ -59,10 +60,13 @@ export class Table {
         this.update();
     }
     update() {
+        const data = { page: undefined, order: this.order };
+        if (this.footer != null)
+            data.page = this.page;
         $.ajax({
             url: this.url,
             method: 'GET',
-            data: { page: this.page, order: this.order },
+            data: data,
             contentType: 'application/json',
             success: (res) => {
                 var _a;
@@ -72,11 +76,6 @@ export class Table {
                     const row = this.parseElement(element);
                     row.appendTo(this);
                 }
-                // Fix for weird FireFox rendering bug
-                $('#table').hide();
-                setTimeout(() => {
-                    $('#table').show();
-                }, 250);
             },
             statusCode: defaultStatusCode
         });
@@ -113,10 +112,7 @@ export class TableHeader extends GenericTableHeader {
             this.updateOrderImg(table.getOrder());
             this.orderImg.addEventListener('click', () => {
                 let order = table.getOrder();
-                if (order.column == this.column)
-                    order = { column: order.column, ascending: !order.ascending };
-                else
-                    order = { column: this.column, ascending: true };
+                order[this.column] = order[this.column] == undefined ? 'asc' : (order[this.column] == 'asc' ? 'desc' : undefined);
                 table.setOrder(order);
             });
         }
@@ -127,7 +123,7 @@ export class TableHeader extends GenericTableHeader {
         table.appendChildToHeaders(th);
     }
     updateOrderImg(order) {
-        this.orderImg.src = '/img/order' + (order.column == this.column ? '-' + (order.ascending ? 'ascending' : 'descending') : '') + '.svg';
+        this.orderImg.src = '/img/order' + (order[this.column] != undefined ? '-' + (order[this.column] == 'asc' ? 'ascending' : 'descending') : '') + '.svg';
     }
 }
 export class LinkTableHeader extends TableHeader {
@@ -207,15 +203,19 @@ export class IconLinkTableData extends TableData {
         this.src = src;
     }
     createTd() {
-        var _a, _b;
         const td = document.createElement('td');
-        const a = document.createElement('a');
+        const div = document.createElement('div');
+        div.classList.add('container');
         const img = document.createElement('img');
+        img.classList.add('button');
         img.alt = 'Link Icon';
         img.src = this.src;
-        a.appendChild(img);
-        a.href = this.href.replace('{id}', (_b = (_a = this.value) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : '');
-        td.appendChild(a);
+        img.addEventListener('click', () => {
+            var _a, _b;
+            window.location.href = this.href.replace('{id}', (_b = (_a = this.value) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : '');
+        });
+        div.appendChild(img);
+        td.appendChild(div);
         return td;
     }
 }

@@ -94,6 +94,18 @@ components:
       type: string
       minLength: 3
       maxLength: 32
+    order:
+      type: string
+      enum:
+        - asc
+        - desc
+    locationsOrder:
+      type: object
+      properties:
+        name:
+          $ref: "#/components/schemas/order"
+      required:
+        - name
 paths:
   /feedbacks/register-username:
     get:
@@ -594,6 +606,13 @@ paths:
         - locations
       summary: Gets all locations
       description: Returns all locations owned by the user
+      operationId: locations(get)
+      parameters:
+        - in: query
+          name: order
+          schema:
+            $ref: "#/components/schemas/locationsOrder"
+          required: false
       responses:
         "200":
           description: All locations of which the user is owner
@@ -641,7 +660,7 @@ paths:
         - locations
       summary: Gets location name
       description: Returns an object with name
-      operationId: locations/[locationId]
+      operationId: locations/[locationId](get)
       parameters:
         - in: path
           name: locationId

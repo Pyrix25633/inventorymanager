@@ -1,4 +1,5 @@
 import { Location } from "@prisma/client";
+import { Order } from "../validation/semantic-validation";
 import { NotFound, UnprocessableContent } from "../web/response";
 import { prisma } from "./prisma";
 
@@ -24,7 +25,7 @@ export async function createLocation(userId: number, name: string): Promise<Loca
     }
 }
 
-export async function findLocations(userId: number, orderBy: { [index: string]: string; } | undefined = undefined): Promise<{ id: number; name: string; }[]> {
+export async function findLocations(userId: number, orderBy: Order | undefined = undefined): Promise<{ id: number; name: string; }[]> {
     return prisma.location.findMany({
         select: {
             id: true,
