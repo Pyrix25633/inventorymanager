@@ -1,5 +1,7 @@
+import { Button } from "./form.js";
 import { loadCustomization } from "./load-customization.js";
 import { IconLinkTableData, LinkTableHeader, StringTableData, Table, TableHeader, TableRow } from "./table.js";
+import { RequireNonNull } from "./utils.js";
 await loadCustomization();
 class LocationsTable extends Table {
     constructor() {
@@ -21,3 +23,9 @@ class LocationsTableRow extends TableRow {
     }
 }
 const locationsTable = new LocationsTable();
+const createButton = new Button('Create Location', '/img/create.svg');
+createButton.setDisabled(false);
+createButton.addClickListener(() => {
+    window.location.href = '/locations/create';
+});
+createButton.appendTo(RequireNonNull.getElementById('locations'));

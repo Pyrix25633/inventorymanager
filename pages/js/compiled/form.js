@@ -72,7 +72,7 @@ export class Button {
         this.inFooter = inFooter;
     }
     appendTo(formOrSection) {
-        if (this.inFooter)
+        if (this.inFooter || formOrSection instanceof HTMLElement)
             formOrSection.appendChild(this.button);
         else {
             const div = document.createElement('div');
@@ -97,8 +97,9 @@ export class Button {
 class CancelButton extends Button {
     constructor() {
         super('Cancel', '/img/cancel.svg', true);
+        const match = window.location.pathname.match(/(\/[^\/]+)+?/);
         this.addClickListener(() => {
-            window.location.href = '/';
+            window.location.href = match != null ? match[1] : '/';
         });
         this.setDisabled(false);
     }

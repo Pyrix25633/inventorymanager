@@ -16,4 +16,4 @@ class CreateLocationForm extends Form {
     }
 }
 
-const createChatForm = new CreateLocationForm();
+const createLocationForm = new CreateLocationForm();

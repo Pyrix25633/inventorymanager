@@ -47,3 +47,18 @@ export async function findLocation(id: number): Promise<Location> {
     if(location == null) throw new NotFound();
     return location;
 }
+
+export async function updateLocation(id: number, name: string): Promise<Location> {
+    try {
+        return await prisma.location.update({
+            data: {
+                name: name
+            },
+            where: {
+                id: id
+            }
+        });
+    } catch(e: any) {
+        throw new UnprocessableContent();
+    }
+}

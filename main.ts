@@ -9,7 +9,7 @@ import https from 'https';
 import path from 'path';
 import { getTfaGenerateKey, getTfaValidateCode, getValidateToken, postLogin, postLoginTfa, postLogout, postRegenerateToken } from './lib/api/auth';
 import { getConfirmUsernameFeedback, getLocationNameFeedback, getLoginUsernameFeedback, getRegisterEmailFeedback, getRegisterUsernameFeedback } from './lib/api/feedbacks';
-import { getLocation, getLocations, postLocation } from './lib/api/locations';
+import { getLocation, getLocations, patchLocation, postLocation } from './lib/api/locations';
 import { getSettings, getSettingsCustomization, getSettingsId, patchSettings } from './lib/api/settings';
 import { postTempUser, postTempUserConfirm } from './lib/api/temp-users';
 import { settings } from './lib/settings';
@@ -98,6 +98,8 @@ main.post('/api/locations', postLocation);
 
 main.get('/api/locations/:locationId', getLocation);
 
+main.patch('/api/locations/:locationId', patchLocation);
+
 // --server-- //
 
 const options = {
@@ -157,4 +159,8 @@ main.get('/locations', (req: Request, res: Response): void => {
 
 main.get('/locations/create', (req: Request, res: Response): void => {
     res.sendFile(path.resolve(__dirname, './pages/location-create.html'));
+});
+
+main.get('/locations/:locationId/edit', (req: Request, res: Response): void => {
+    res.sendFile(path.resolve(__dirname, './pages/location-edit.html'));
 });

@@ -685,3 +685,33 @@ paths:
           description: "Forbidden: requesting user does not own requested location"
         "404":
           description: "Not Found: no locations found with specified locationId"
+    patch:
+      tags:
+        - location
+      summary: Modifies the location
+      description: Updates the location name
+      operationId: locations/[locationId](patch)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  $ref: "#/components/schemas/name"
+              required:
+                - name
+      responses:
+        "204":
+          description: Location updated successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: "Forbidden: requesting user does not own requested location"
+        "404":
+          description: "Not Found: no locations found with specified locationId"
+        "422":
+          description: "Unprocessable Content: location cannot be updated"

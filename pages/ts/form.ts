@@ -2,6 +2,10 @@ import { RequireNonNull, StatusCode, Success, defaultStatusCode } from './utils.
 
 type JsonObject = { [index: string]: any; };
 
+export interface FormAppendable {
+    appendTo(formOrSection: Form | InputSection): void;
+}
+
 export abstract class Form {
     protected readonly url: string;
     private readonly method: string;
@@ -94,8 +98,8 @@ export class Button implements FormAppendable {
         this.inFooter = inFooter;
     }
 
-    appendTo(formOrSection: Form | InputSection) {
-        if(this.inFooter)
+    appendTo(formOrSection: Form | InputSection | HTMLElement) {
+        if(this.inFooter || formOrSection instanceof HTMLElement)
             formOrSection.appendChild(this.button);
         else {
             const div = document.createElement('div');
@@ -125,8 +129,9 @@ export class Button implements FormAppendable {
 class CancelButton extends Button {
     constructor() {
         super('Cancel', '/img/cancel.svg', true);
+        const match = window.location.pathname.match(/(\/[^\/]+)+?/);
         this.addClickListener((): void => {
-            window.location.href = '/';
+            window.location.href = match != null ? match[1] : '/';
         });
         this.setDisabled(false);
     }
@@ -218,10 +223,6 @@ export abstract class StructuredForm extends Form {
         super.show(show);
         this.cancelButton.show(show);
     }
-}
-
-export interface FormAppendable {
-    appendTo(formOrSection: Form | InputSection): void;
 }
 
 export class InfoSpan implements FormAppendable {

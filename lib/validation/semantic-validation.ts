@@ -69,7 +69,7 @@ export function getName(raw: any): string {
 
 export function getOrder(raw: any): Order {
     const parsed: any = getObject(raw);
-    for(const index in Object.keys(parsed)) {
+    for(const index of Object.keys(parsed)) {
         const order = parsed[index];
         if(order != 'asc' && order != 'desc')
             throw new BadRequest();

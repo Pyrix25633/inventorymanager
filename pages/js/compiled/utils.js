@@ -117,3 +117,11 @@ export class CssManager {
         return '/css/' + name + '-' + (on ? 'on' : 'off') + '.css';
     }
 }
+export function getParameter(regExp) {
+    const match = window.location.href.match(regExp);
+    if (match == null) {
+        window.location.href = '/error?code=400&message=Bad%20Request';
+        throw new Error('Invalid Parameter!');
+    }
+    return match[1];
+}

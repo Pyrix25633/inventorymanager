@@ -12,4 +12,4 @@ class CreateLocationForm extends Form {
         }, defaultStatusCode);
     }
 }
-const createChatForm = new CreateLocationForm();
+const createLocationForm = new CreateLocationForm();
