@@ -24,27 +24,29 @@ model User {
   sessionDuration Int     @default(14) @db.TinyInt
   tfaKey          String? @db.Char(52)
 
-  locations Location[]
-  products Product[]
-  food Food[]
-  series Series[]
-  books Book[]
+  locations       Location[]
+  products        Product[]
+  food            Food[]
+  categories      Category[]
+  books           Book[]
 }
 
 model Location {
-  id     Int    @id @default(autoincrement())
-  user   User   @relation(fields: [userId], references: [id])
-  userId Int
-  name   String @db.VarChar(32)
+  id       Int    @id @default(autoincrement())
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int
+  name     String @db.VarChar(32)
 
   @@unique([userId, name])
 
   products Product[]
+  Series   Category[]
 }
 
 enum UnitOfMeasurement {
   PIECES
   GRAMS
+  LITERS
 }
 
 model Product {
@@ -59,7 +61,7 @@ model Product {
 
   @@unique([userId, name])
 
-  food Food[]
+  food                     Food[]
 }
 
 model Food {
@@ -74,22 +76,24 @@ model Food {
   expiration        DateTime          @db.Date
 }
 
-model Series {
-  id     Int    @id @default(autoincrement())
-  user   User   @relation(fields: [userId], references: [id])
-  userId Int
-  name   String @db.VarChar(32)
+model Category {
+  id                Int      @id @default(autoincrement())
+  user              User     @relation(fields: [userId], references: [id])
+  userId            Int
+  name              String   @db.VarChar(32)
+  defaultLocation   Location @relation(fields: [defaultLocationId], references: [id])
+  defaultLocationId Int
 
   @@unique([userId, name])
 
-  book Book[]
+  book              Book[]
 }
 
 model Book {
-  id       Int    @id @default(autoincrement())
-  user     User   @relation(fields: [userId], references: [id])
-  userId   Int
-  series   Series @relation(fields: [seriesId], references: [id])
-  seriesId Int
-  number   String @db.VarChar(16)
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  number     String   @db.VarChar(16)
 }

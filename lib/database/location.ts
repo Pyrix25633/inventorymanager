@@ -44,7 +44,8 @@ export async function findLocation(id: number): Promise<Location> {
             id: id
         }
     });
-    if(location == null) throw new NotFound();
+    if(location == null)
+        throw new NotFound();
     return location;
 }
 

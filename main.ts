@@ -8,6 +8,7 @@ import http from 'http';
 import https from 'https';
 import path from 'path';
 import { getTfaGenerateKey, getTfaValidateCode, getValidateToken, postLogin, postLoginTfa, postLogout, postRegenerateToken } from './lib/api/auth';
+import { getCategories, getCategory, patchCategory, postCategory } from './lib/api/categories';
 import { getConfirmUsernameFeedback, getLocationNameFeedback, getLoginUsernameFeedback, getRegisterEmailFeedback, getRegisterUsernameFeedback } from './lib/api/feedbacks';
 import { getLocation, getLocations, patchLocation, postLocation } from './lib/api/locations';
 import { getSettings, getSettingsCustomization, getSettingsId, patchSettings } from './lib/api/settings';
@@ -99,6 +100,16 @@ main.post('/api/locations', postLocation);
 main.get('/api/locations/:locationId', getLocation);
 
 main.patch('/api/locations/:locationId', patchLocation);
+
+// categories //
+
+main.get('/api/categories', getCategories);
+
+main.post('/api/categories', postCategory);
+
+main.get('/api/categories/:categoryId', getCategory);
+
+main.patch('/api/categories/:categoryId', patchCategory);
 
 // --server-- //
 
