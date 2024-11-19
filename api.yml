@@ -23,6 +23,8 @@ tags:
     description: Handles user settings
   - name: locations
     description: Handles locations
+  - name: categories
+    description: Handles categories
 components:
   securitySchemes:
     cookieAuth:
@@ -94,6 +96,10 @@ components:
       type: string
       minLength: 3
       maxLength: 32
+    page:
+      type: integer
+      example: 2
+      minimum: 0
     order:
       type: string
       enum:
@@ -104,6 +110,20 @@ components:
       properties:
         name:
           $ref: "#/components/schemas/order"
+      required:
+        - name
+    categoriesOrder:
+      type: object
+      properties:
+        name:
+          $ref: "#/components/schemas/order"
+        defaultLocation:
+          type: object
+          properties:
+            name:
+              $ref: "#/components/schemas/order"
+          required:
+            - name
       required:
         - name
 paths:
@@ -215,19 +235,46 @@ paths:
     get:
       tags:
         - feedbacks
-      summary: Location name feedback for the location creation form
-      description: Returns a user friendly location name feedback
+      summary: Location's name feedback for the location creation form
+      description: Returns a user friendly location's name feedback
       operationId: feedbacks/location-name
       parameters:
         - in: query
           name: name
           schema:
             $ref: "#/components/schemas/name"
-          description: The location name
+          description: The location's name
           required: true
       responses:
         "200":
-          description: Location name feedback
+          description: Location's name feedback
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  feedback:
+                    type: string
+                    example: Valid Name
+        "400":
+          description: Bad Request
+  /feedbacks/category-name:
+    get:
+      tags:
+        - feedbacks
+      summary: Category's name feedback for the category's creation form
+      description: Returns a user friendly category's name feedback
+      operationId: feedbacks/category-name
+      parameters:
+        - in: query
+          name: name
+          schema:
+            $ref: "#/components/schemas/name"
+          description: The category's name
+          required: true
+      responses:
+        "200":
+          description: Category's name feedback
           content:
             application/json:
               schema:
@@ -630,6 +677,8 @@ paths:
                           $ref: "#/components/schemas/id"
                         name:
                           $ref: "#/components/schemas/name"
+        "400":
+          description: Bad Request
         "401":
           description: Unauthorized
     post:
@@ -658,8 +707,8 @@ paths:
     get:
       tags:
         - locations
-      summary: Gets location name
-      description: Returns an object with name
+      summary: Gets location
+      description: Returns the location's name
       operationId: locations/[locationId](get)
       parameters:
         - in: path
@@ -687,10 +736,16 @@ paths:
           description: "Not Found: no locations found with specified locationId"
     patch:
       tags:
-        - location
+        - locations
       summary: Modifies the location
-      description: Updates the location name
+      description: Updates the location's name
       operationId: locations/[locationId](patch)
+      parameters:
+        - in: path
+          name: locationId
+          schema:
+            $ref: "#/components/schemas/id"
+          required: true
       requestBody:
         required: true
         content:
@@ -715,3 +770,141 @@ paths:
           description: "Not Found: no locations found with specified locationId"
         "422":
           description: "Unprocessable Content: location cannot be updated"
+  /categories:
+    get:
+      tags:
+        - categories
+      summary: Gets all categories
+      description: Returns all categories owned by the user
+      operationId: categories(get)
+      parameters:
+        - in: query
+          name: page
+          schema:
+            $ref: "#/components/schemas/page"
+          required: false
+        - in: query
+          name: order
+          schema:
+            $ref: "#/components/schemas/categoriesOrder"
+          required: false
+      responses:
+        "200":
+          description: All categories of which the user is owner
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chats:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          $ref: "#/components/schemas/id"
+                        name:
+                          $ref: "#/components/schemas/name"
+                        defaultLocation:
+                          type: object
+                          properties:
+                            name:
+                              $ref: "#/components/schemas/name"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+    post:
+      tags:
+        - categories
+      summary: Creates a new category
+      description: Creates a new category
+      operationId: categories(post)
+      responses:
+        "201":
+          description: Category created succesfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    $ref: "#/components/schemas/id"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "422":
+          description: "Unprocessable Content: category cannot be created"
+  /categories/{categoryId}:
+    get:
+      tags:
+        - categories
+      summary: Gets category
+      description: Returns category's name and defaultLocationId
+      operationId: categories/[categoryId](get)
+      parameters:
+        - in: path
+          name: categoryId
+          schema:
+            $ref: "#/components/schemas/id"
+          required: true
+      responses:
+        "200":
+          description: Name and defaultLocationId
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    $ref: "#/components/schemas/name"
+                  defaultLocationId:
+                    $ref: "#/components/schemas/id"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: "Forbidden: requesting user does not own requested category"
+        "404":
+          description: "Not Found: no categories found with specified categoryId"
+    patch:
+      tags:
+        - categories
+      summary: Modifies the category
+      description: Updates the category's name and defaultLocationId
+      operationId: categories/[categoryId](patch)
+      parameters:
+        - in: path
+          name: categoryId
+          schema:
+            $ref: "#/components/schemas/id"
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  $ref: "#/components/schemas/name"
+                defaultLocationId:
+                  $ref: "#/components/schemas/id"
+              required:
+                - name
+                - defaultLocationId
+      responses:
+        "204":
+          description: Category updated successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: "Forbidden: requesting user does not own requested category"
+        "404":
+          description: "Not Found: no categories found with specified categoryId"
+        "422":
+          description: "Unprocessable Content: category cannot be updated"

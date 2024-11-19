@@ -9,7 +9,7 @@ import https from 'https';
 import path from 'path';
 import { getTfaGenerateKey, getTfaValidateCode, getValidateToken, postLogin, postLoginTfa, postLogout, postRegenerateToken } from './lib/api/auth';
 import { getCategories, getCategory, patchCategory, postCategory } from './lib/api/categories';
-import { getConfirmUsernameFeedback, getLocationNameFeedback, getLoginUsernameFeedback, getRegisterEmailFeedback, getRegisterUsernameFeedback } from './lib/api/feedbacks';
+import { getCategoryNameFeedback, getConfirmUsernameFeedback, getLocationNameFeedback, getLoginUsernameFeedback, getRegisterEmailFeedback, getRegisterUsernameFeedback } from './lib/api/feedbacks';
 import { getLocation, getLocations, patchLocation, postLocation } from './lib/api/locations';
 import { getSettings, getSettingsCustomization, getSettingsId, patchSettings } from './lib/api/settings';
 import { postTempUser, postTempUserConfirm } from './lib/api/temp-users';
@@ -58,6 +58,8 @@ main.get('/api/feedbacks/confirm-username', getConfirmUsernameFeedback);
 main.get('/api/feedbacks/login-username', getLoginUsernameFeedback);
 
 main.get('/api/feedbacks/location-name', getLocationNameFeedback);
+
+main.get('/api/feedbacks/category-name', getCategoryNameFeedback);
 
 // temp-users //
 

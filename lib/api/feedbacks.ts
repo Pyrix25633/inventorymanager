@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { isCategoryNameInUse } from "../database/category";
 import { isLocationNameInUse } from "../database/location";
 import { isTempUserEmailInUse, isTempUserUsernameInUse } from "../database/temp-user";
 import { isUserEmailInUse, isUserUsernameInUse } from "../database/user";
@@ -84,6 +85,27 @@ export async function getLocationNameFeedback(req: Request, res: Response): Prom
         try {
             const name = getName(req.query.name);
             const inUse = await isLocationNameInUse(user.id, name);
+            feedback = inUse ? 'Name already used!' : 'Valid Name';
+        } catch(e: any) {
+            const name = getString(req.query.name);
+            if(name.length < 3)
+                feedback = 'Name too short!';
+            else
+                feedback = 'Name too long!';
+        }
+        new Ok({feedback: feedback}).send(res);
+    } catch(e: any) {
+        handleException(e, res);
+    }
+}
+
+export async function getCategoryNameFeedback(req: Request, res: Response): Promise<void> {
+    try {
+        const user = await validateToken(req);
+        let feedback: string;
+        try {
+            const name = getName(req.query.name);
+            const inUse = await isCategoryNameInUse(user.id, name);
             feedback = inUse ? 'Name already used!' : 'Valid Name';
         } catch(e: any) {
             const name = getString(req.query.name);
