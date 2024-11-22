@@ -1,4 +1,4 @@
-import { RequireNonNull, defaultStatusCode } from "./utils.js";
+import { defaultStatusCode, RequireNonNull } from "./utils.js";
 
 type Order = { [index: string]: 'asc' | 'desc' | undefined; };
 
@@ -85,6 +85,7 @@ export abstract class Table {
     }
 
     public update(): void {
+        //TODO: modify
         const data: { page: undefined | number; order: Order; } = { page: undefined, order: this.order };
         if(this.footer != null)
             data.page = this.page;

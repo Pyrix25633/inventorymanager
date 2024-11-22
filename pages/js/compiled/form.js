@@ -104,6 +104,15 @@ class CancelButton extends Button {
         this.setDisabled(false);
     }
 }
+export class RedirectButton extends Button {
+    constructor(text, iconSrc, url) {
+        super(text, iconSrc, false);
+        this.setDisabled(false);
+        this.addClickListener(() => {
+            window.location.href = url;
+        });
+    }
+}
 export class ActionButton extends Button {
     constructor(text, iconSrc, feedbackText, action = () => { }) {
         super(text, iconSrc);
@@ -427,6 +436,101 @@ export class ApiFeedbackInput extends Input {
                 }
             });
         });
+    }
+}
+export class DropdownInput extends InputElement {
+    constructor(id, labelText) {
+        super(id);
+        this.labelText = labelText;
+        this.select = document.createElement('select');
+        this.select.id = id;
+    }
+    appendTo(formOrSection) {
+        const container = document.createElement('div');
+        container.classList.add('container', 'label-input');
+        const label = document.createElement('label');
+        label.htmlFor = this.id;
+        label.innerText = this.labelText;
+        container.appendChild(label);
+        container.appendChild(this.select);
+        formOrSection.appendChild(container);
+    }
+    async parse() {
+        for (const option of this.select.childNodes) {
+            if (option instanceof HTMLOptionElement && option.selected)
+                return this.parseValue(option.value);
+        }
+        throw new Error("No option selected");
+    }
+    getError() {
+        return false;
+    }
+    addOption(value, text) {
+        const option = document.createElement('option');
+        switch (typeof value) {
+            case 'string':
+            case 'number':
+                option.value = value.toString();
+        }
+        option.innerText = text;
+        this.select.appendChild(option);
+    }
+    precompile(value) {
+        for (const option of this.select.childNodes) {
+            if (option instanceof HTMLOptionElement)
+                option.selected = option.value == value;
+        }
+        if (typeof value == 'string' || typeof value == 'number')
+            localStorage.setItem(this.id + '-select', value.toString());
+    }
+}
+export class ApiDropdownInput extends DropdownInput {
+    constructor(id, labelText, url) {
+        super(id, labelText);
+        this.url = url;
+        this.error = true;
+    }
+    appendTo(formOrSection) {
+        const container = document.createElement('div');
+        container.classList.add('container', 'label-input');
+        formOrSection.appendChild(container);
+        $.ajax({
+            url: this.url,
+            method: 'GET',
+            success: (res) => {
+                const match = this.url.match(/(?:\/([^\/]+))+?$/);
+                if (match == null)
+                    return;
+                const index = match[1];
+                this.error = res[index].length == 0;
+                for (const option of res[index]) {
+                    this.addOption(option.id, option.name);
+                }
+                const last = localStorage.getItem(this.id + '-select');
+                if (last != null)
+                    this.precompile(this.parseValue(last));
+                formOrSection.validate();
+                const label = document.createElement('label');
+                label.htmlFor = this.id;
+                label.innerText = this.labelText;
+                container.appendChild(label);
+                if (this.error) {
+                    const create = new RedirectButton('Create Location', '/img/create.svg', '/locations/create');
+                    create.appendTo(container);
+                }
+                else
+                    container.appendChild(this.select);
+            },
+            error: (req, err) => {
+                console.error(err);
+            }
+        });
+    }
+    parseValue(value) {
+        return parseInt(value);
+    }
+    getError() {
+        return this.error;
     }
 }
 export class InputSection extends InputElement {

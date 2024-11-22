@@ -2,7 +2,7 @@ div.navbar {
     border-radius: 4px;
 }
 
-button, input {
+button, input, select {
     border-radius: 2px;
 }
 

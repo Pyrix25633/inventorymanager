@@ -50,7 +50,7 @@ export async function getCategory(req: Request, res: Response): Promise<void> {
 export async function patchCategory(req: Request, res: Response): Promise<void> {
     try {
         const user = await validateToken(req);
-        const id = getInt(req.params.locationId);
+        const id = getInt(req.params.categoryId);
         const body = getObject(req.body);
         const name = getName(body.name);
         const defaultLocationId = getInt(body.defaultLocationId);

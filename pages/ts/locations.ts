@@ -1,4 +1,4 @@
-import { Button } from "./form.js";
+import { RedirectButton } from "./form.js";
 import { loadCustomization } from "./load-customization.js";
 import { IconLinkTableData, LinkTableHeader, StringTableData, Table, TableData, TableHeader, TableRow } from "./table.js";
 import { RequireNonNull } from "./utils.js";
@@ -34,9 +34,5 @@ class LocationsTableRow extends TableRow {
 
 const locationsTable = new LocationsTable();
 
-const createButton = new Button('Create Location', '/img/create.svg');
-createButton.setDisabled(false);
-createButton.addClickListener((): void => {
-    window.location.href = '/locations/create';
-});
+const createButton = new RedirectButton('Create Location', '/img/create.svg', '/locations/create');
 createButton.appendTo(RequireNonNull.getElementById('locations'));

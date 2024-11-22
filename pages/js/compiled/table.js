@@ -1,4 +1,4 @@
-import { RequireNonNull, defaultStatusCode } from "./utils.js";
+import { defaultStatusCode, RequireNonNull } from "./utils.js";
 export class Table {
     constructor(url, resourceName, groups, headers, footer = true) {
         var _a;
@@ -60,6 +60,7 @@ export class Table {
         this.update();
     }
     update() {
+        //TODO: modify
         const data = { page: undefined, order: this.order };
         if (this.footer != null)
             data.page = this.page;

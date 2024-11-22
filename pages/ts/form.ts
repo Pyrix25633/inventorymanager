@@ -137,6 +137,16 @@ class CancelButton extends Button {
     }
 }
 
+export class RedirectButton extends Button {
+    constructor(text: string, iconSrc: string, url: string) {
+        super(text, iconSrc, false);
+        this.setDisabled(false);
+        this.addClickListener(() => {
+            window.location.href = url;
+        });
+    }
+}
+
 type Action = () => void;
 
 export class ActionButton extends Button {
@@ -521,6 +531,119 @@ export class ApiFeedbackInput extends Input<string> {
                 }
             });
         });
+    }
+}
+
+export abstract class DropdownInput<T> extends InputElement<T> {
+    protected readonly select: HTMLSelectElement;
+    protected readonly labelText: string;
+
+    constructor(id: string, labelText: string) {
+        super(id);
+        this.labelText = labelText;
+        this.select = document.createElement('select');
+        this.select.id = id;
+    }
+
+    appendTo(formOrSection: Form | InputSection): void {
+        const container = document.createElement('div');
+        container.classList.add('container', 'label-input');
+        const label = document.createElement('label');
+        label.htmlFor = this.id;
+        label.innerText = this.labelText;
+        container.appendChild(label);
+        container.appendChild(this.select);
+        formOrSection.appendChild(container);
+    }
+
+    abstract parseValue(value: string): T;
+
+    async parse(): Promise<T> {
+        for(const option of this.select.childNodes) {
+            if(option instanceof HTMLOptionElement && option.selected)
+                return this.parseValue(option.value);
+        }
+        throw new Error("No option selected");
+    }
+
+    getError(): boolean {
+        return false;
+    }
+
+    addOption(value: T, text: string) {
+        const option: HTMLOptionElement = document.createElement('option');
+        switch(typeof value) {
+            case 'string':
+            case 'number':
+                option.value = value.toString();
+        }
+        option.innerText = text;
+        this.select.appendChild(option);
+    }
+
+    precompile(value: T): void {
+        for(const option of this.select.childNodes) {
+            if(option instanceof HTMLOptionElement)
+                option.selected = option.value == value;
+        }
+        if(typeof value == 'string' || typeof value == 'number')
+            localStorage.setItem(this.id + '-select', value.toString());
+    }
+}
+
+export class ApiDropdownInput extends DropdownInput<number> {
+    private readonly url: string;
+    private error: boolean;
+
+    constructor(id: string, labelText: string, url: string) {
+        super(id, labelText);
+        this.url = url;
+        this.error = true;
+    }
+
+    appendTo(formOrSection: Form | InputSection): void {
+        const container = document.createElement('div');
+        container.classList.add('container', 'label-input');
+        formOrSection.appendChild(container);
+        $.ajax({
+            url: this.url,
+            method: 'GET',
+            success: (res: { [index: string]: { id: number; name: string; }[] }) => {
+                const match = this.url.match(/(?:\/([^\/]+))+?$/);
+                if(match == null)
+                    return;
+                const index = match[1];
+                this.error = res[index].length == 0;
+                for(const option of res[index]) {
+                    this.addOption(option.id, option.name);
+                }
+                const last: string | null = localStorage.getItem(this.id + '-select');
+                if(last != null)
+                    this.precompile(this.parseValue(last));
+                formOrSection.validate();
+                const label = document.createElement('label');
+                label.htmlFor = this.id;
+                label.innerText = this.labelText;
+                container.appendChild(label);
+                if(this.error) {
+                    const create = new RedirectButton('Create Location', '/img/create.svg', '/locations/create');
+                    create.appendTo(container);
+                }
+                else
+                    container.appendChild(this.select);
+            },
+            error: (req, err) => {
+                console.error(err);
+            }
+        });
+    }
+
+    parseValue(value: string): number {
+        return parseInt(value);
+    }
+
+    getError(): boolean {
+        return this.error;
     }
 }
 

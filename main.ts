@@ -177,3 +177,15 @@ main.get('/locations/create', (req: Request, res: Response): void => {
 main.get('/locations/:locationId/edit', (req: Request, res: Response): void => {
     res.sendFile(path.resolve(__dirname, './pages/location-edit.html'));
 });
+
+main.get('/categories', (req: Request, res: Response): void => {
+    res.sendFile(path.resolve(__dirname, './pages/categories.html'));
+});
+
+main.get('/categories/create', (req: Request, res: Response): void => {
+    res.sendFile(path.resolve(__dirname, './pages/category-create.html'));
+});
+
+main.get('/categories/:categoryId/edit', (req: Request, res: Response): void => {
+    res.sendFile(path.resolve(__dirname, './pages/category-edit.html'));
+});
