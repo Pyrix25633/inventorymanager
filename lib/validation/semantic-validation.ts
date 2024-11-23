@@ -1,8 +1,9 @@
 import { Customization } from "../database/user";
 import { BadRequest } from "../web/response";
-import { getBoolean, getInt, getObject, getString } from "./type-validation";
+import { getArray, getBoolean, getInt, getObject, getString } from "./type-validation";
 
-export type Order = { [index: string]: 'asc' | 'desc' | Order; }[];
+type OrderValue = { [index: string]: 'asc' | 'desc' | OrderValue; };
+export type Order = OrderValue[];
 
 const usernameRegex = /^(?:\w|-| ){3,32}$/;
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -67,15 +68,22 @@ export function getName(raw: any): string {
     return parsed;
 }
 
-export function getOrder(raw: any): Order {
-    //TODO: modify
+export function getOrderValue(raw: any): OrderValue {
     const parsed: any = getObject(raw);
-    for(const index of Object.keys(parsed)) {
-        const order = parsed[index];
-        if(typeof order == 'object')
-            getOrder(order);
-        else if(order != 'asc' && order != 'desc')
-            throw new BadRequest();
-    }
+    const keys = Object.keys(parsed);
+    if(keys.length != 1)
+        throw new BadRequest();
+    const value = parsed[keys[0]];
+    if(typeof value == 'object')
+        getOrderValue(value);
+    else if(value != 'asc' && value != 'desc')
+        throw new BadRequest();
+    return parsed;
+}
+
+export function getOrder(raw: any): Order {
+    const parsed = getArray(raw);
+    for(const value of parsed)
+        getOrderValue(value);
     return parsed;
 }

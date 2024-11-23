@@ -3,6 +3,8 @@ import { Order } from "../validation/semantic-validation";
 import { NotFound, UnprocessableContent } from "../web/response";
 import { prisma } from "./prisma";
 
+const pageSize = 10;
+
 export async function isCategoryNameInUse(userId: number, name: string): Promise<boolean> {
     return (await prisma.category.count({
         where: {
@@ -29,6 +31,7 @@ export async function createCategory(userId: number, name: string, defaultLocati
 export async function findCategories(userId: number, page: number | undefined, order: Order | undefined): Promise<{ name: string; defaultLocation: { name: string; } }[]> {
     return prisma.category.findMany({
         select: {
+            id: true,
             name: true,
             defaultLocation: {
                 select: {
@@ -40,9 +43,13 @@ export async function findCategories(userId: number, page: number | undefined, o
             userId: userId
         },
         orderBy: order,
-        skip: page != undefined ? page * 10 : undefined,
-        take: page != undefined ? 10 : undefined
+        skip: page != undefined ? page * pageSize : undefined,
+        take: page != undefined ? pageSize : undefined
     });
+}
+
+export async function countCategoriesPages(): Promise<number> {
+    return Math.ceil(await prisma.category.count() / pageSize);
 }
 
 export async function findCategory(id: number): Promise<Category> {

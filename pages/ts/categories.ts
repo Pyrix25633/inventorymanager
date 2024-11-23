@@ -17,7 +17,7 @@ class CategoriesTable extends Table {
             new TableHeader('Name', 'name'),
             new TableHeader('Default Location', 'defaultLocation[name]'),
             new LinkTableHeader('Edit')
-        ], false);
+        ]);
     }
 
     public parseElement(element: Category): TableRow {

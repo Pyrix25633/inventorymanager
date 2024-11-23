@@ -100,32 +100,26 @@ components:
       type: integer
       example: 2
       minimum: 0
+    pages:
+      type: integer
+      example: 3
+      minimum: 1
+    orderValue:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          oneOf:
+            - type: string
+              enum:
+                - asc
+                - desc
+            - $ref: "#/components/schemas/orderValue"
     order:
-      type: string
-      enum:
-        - asc
-        - desc
-    locationsOrder:
-      type: object
-      properties:
-        name:
-          $ref: "#/components/schemas/order"
-      required:
-        - name
-    categoriesOrder:
-      type: object
-      properties:
-        name:
-          $ref: "#/components/schemas/order"
-        defaultLocation:
-          type: object
-          properties:
-            name:
-              $ref: "#/components/schemas/order"
-          required:
-            - name
-      required:
-        - name
+      type: array
+      items:
+        type: object
+        $ref: "#/components/schemas/orderValue"
 paths:
   /feedbacks/register-username:
     get:
@@ -658,8 +652,10 @@ paths:
         - in: query
           name: order
           schema:
-            $ref: "#/components/schemas/locationsOrder"
+            $ref: "#/components/schemas/order"
           required: false
+          example:
+            - name: 'asc'
       responses:
         "200":
           description: All locations of which the user is owner
@@ -786,8 +782,12 @@ paths:
         - in: query
           name: order
           schema:
-            $ref: "#/components/schemas/categoriesOrder"
+            $ref: "#/components/schemas/order"
           required: false
+          example:
+            - name: 'asc'
+            - defaultLocation:
+                name: 'desc'
       responses:
         "200":
           description: All categories of which the user is owner
@@ -810,6 +810,8 @@ paths:
                           properties:
                             name:
                               $ref: "#/components/schemas/name"
+                  pages:
+                    $ref: "#/components/schemas/pages"
         "400":
           description: Bad Request
         "401":

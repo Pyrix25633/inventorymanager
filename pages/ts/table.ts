@@ -1,6 +1,8 @@
 import { defaultStatusCode, RequireNonNull } from "./utils.js";
 
-type Order = { [index: string]: 'asc' | 'desc' | undefined; };
+type BaseOrderValue = 'asc' | 'desc' | undefined;
+type OrderValue = { [index: string]: 'asc' | 'desc'; };
+type Order = OrderValue[];
 
 export abstract class Table {
     private readonly url: string;
@@ -31,8 +33,8 @@ export abstract class Table {
         this.headersRow = document.createElement('tr');
         head.appendChild(this.headersRow);
         this.headers = headers;
-        this.order = {};
-        this.order[headers[0].column] = 'asc';
+        this.order = [];
+        this.addToOrder({ [headers[0].column]: 'asc' });
         for(const header of headers)
             header.appendTo(this);
         this.groups = groups;
@@ -64,15 +66,48 @@ export abstract class Table {
         this.body.appendChild(node);
     }
 
-    public getOrder(): Order {
-        return this.order;
+    public getOrder(column: string): BaseOrderValue {
+        for(const value of this.order) {
+            const key = Object.keys(value)[0];
+            if(key == column)
+                return value[key];
+        }
+        return undefined;
     }
 
-    public setOrder(order: Order): void {
-        this.order = order;
-        for(const header of this.headers)
-            header.updateOrderImg(order);
+    public removeFromOrder(column: string, update: boolean = true): void {
+        for(let i = 0; i < this.order.length; i++) {
+            if(Object.keys(this.order[i])[0] == column) {
+                this.order.splice(i, 1);
+            }
+        }
+        if(!update)
+            return;
+        this.updateHeadersOrder();
         this.update();
+    }
+
+    public addToOrder(order: OrderValue): void {
+        this.removeFromOrder(Object.keys(order)[0], false);
+        this.order.push(order);
+        this.updateHeadersOrder();
+        this.update();
+    }
+
+    public updateHeadersOrder(): void {
+        for(const header of this.headers) {
+            let found = false;
+            for(let i = 0; i < this.order.length; i++) {
+                const key = Object.keys(this.order[i])[0];
+                if(key == header.column) {
+                    found = true;
+                    header.updateOrder(this.order[i][key]);
+                    break;
+                }
+            }
+            if(!found)
+                header.updateOrder(undefined);
+        }
     }
 
     public getPage(): number {
@@ -85,7 +120,6 @@ export abstract class Table {
     }
 
     public update(): void {
-        //TODO: modify
         const data: { page: undefined | number; order: Order; } = { page: undefined, order: this.order };
         if(this.footer != null)
             data.page = this.page;
@@ -124,6 +158,7 @@ export enum Extra {
 export class TableHeader extends GenericTableHeader {
     public readonly column: string;
     private readonly orderImg: HTMLImageElement;
+    private order: BaseOrderValue;
     private readonly extra: Extra | undefined;
     
     public constructor(text: string, column: string, extra: Extra | undefined = undefined) {
@@ -132,6 +167,7 @@ export class TableHeader extends GenericTableHeader {
         this.orderImg = document.createElement('img');
         this.orderImg.classList.add('button');
         this.orderImg.alt = 'Order Icon';
+        this.order = undefined;
         this.extra = extra;
     }
 
@@ -145,11 +181,14 @@ export class TableHeader extends GenericTableHeader {
             span.classList.add('link');
         span.innerText = this.text;
         if(this.extra != Extra.Link) {
-            this.updateOrderImg(table.getOrder());
+            this.order = table.getOrder(this.column);
+            this.updateOrder(this.order);
             this.orderImg.addEventListener('click', (): void => {
-                let order = table.getOrder();
-                order[this.column] = order[this.column] == undefined ? 'asc' : (order[this.column] == 'asc' ? 'desc' : undefined);
-                table.setOrder(order);
+                this.order = this.order == undefined ? 'asc' : (this.order == 'asc' ? 'desc' : undefined);
+                if(this.order == undefined)
+                    table.removeFromOrder(this.column);
+                else
+                    table.addToOrder({ [this.column]: this.order });
             });
         }
         div.appendChild(span);
@@ -159,8 +198,8 @@ export class TableHeader extends GenericTableHeader {
         table.appendChildToHeaders(th);
     }
 
-    public updateOrderImg(order: Order): void {
-        this.orderImg.src = '/img/order' + (order[this.column] != undefined ? '-' + (order[this.column] == 'asc' ? 'ascending' : 'descending') : '') + '.svg';
+    public updateOrder(order: BaseOrderValue): void {
+        this.orderImg.src = '/img/order' + (order != undefined ? '-' + (order == 'asc' ? 'ascending' : 'descending') : '') + '.svg';
     }
 }
 
@@ -346,6 +385,7 @@ export class TableFooter {
         this.current = document.createElement('input');
         this.current.type = 'number';
         this.current.id = 'page';
+        this.current.classList.add('small');
         const currentInputHandler = (): void => {
             table.setPage(parseInt(this.current.value));
         };

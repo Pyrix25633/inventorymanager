@@ -9,7 +9,7 @@ class CategoriesTable extends Table {
             new TableHeader('Name', 'name'),
             new TableHeader('Default Location', 'defaultLocation[name]'),
             new LinkTableHeader('Edit')
-        ], false);
+        ]);
     }
     parseElement(element) {
         return new CategoriesTableRow(element);
