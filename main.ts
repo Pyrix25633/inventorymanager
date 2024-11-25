@@ -8,6 +8,7 @@ import http from 'http';
 import https from 'https';
 import path from 'path';
 import { getTfaGenerateKey, getTfaValidateCode, getValidateToken, postLogin, postLoginTfa, postLogout, postRegenerateToken } from './lib/api/auth';
+import { delBook, getBook, getBooks, patchBook, postBook } from './lib/api/books';
 import { getCategories, getCategory, patchCategory, postCategory } from './lib/api/categories';
 import { getCategoryNameFeedback, getConfirmUsernameFeedback, getLocationNameFeedback, getLoginUsernameFeedback, getRegisterEmailFeedback, getRegisterUsernameFeedback } from './lib/api/feedbacks';
 import { getLocation, getLocations, patchLocation, postLocation } from './lib/api/locations';
@@ -113,6 +114,18 @@ main.get('/api/categories/:categoryId', getCategory);
 
 main.patch('/api/categories/:categoryId', patchCategory);
 
+// books //
+
+main.get('/api/books', getBooks);
+
+main.post('/api/books', postBook);
+
+main.get('/api/books/:bookId', getBook);
+
+main.patch('/api/books/:bookId', patchBook);
+
+main.delete('/api/books/:bookId', delBook);
+
 // --server-- //
 
 const options = {
@@ -188,4 +201,20 @@ main.get('/categories/create', (req: Request, res: Response): void => {
 
 main.get('/categories/:categoryId/edit', (req: Request, res: Response): void => {
     res.sendFile(path.resolve(__dirname, './pages/category-edit.html'));
+});
+
+main.get('/books', (req: Request, res: Response): void => {
+    res.sendFile(path.resolve(__dirname, './pages/books.html'));
+});
+
+main.get('/books/create', (req: Request, res: Response): void => {
+    res.sendFile(path.resolve(__dirname, './pages/book-create.html'));
+});
+
+main.get('/books/:bookId/edit', (req: Request, res: Response): void => {
+    res.sendFile(path.resolve(__dirname, './pages/book-edit.html'));
+});
+
+main.get('/books/:bookId/delete', (req: Request, res: Response): void => {
+    res.sendFile(path.resolve(__dirname, './pages/book-delete.html'));
 });

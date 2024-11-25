@@ -32,15 +32,16 @@ model User {
 }
 
 model Location {
-  id       Int    @id @default(autoincrement())
-  user     User   @relation(fields: [userId], references: [id])
-  userId   Int
-  name     String @db.VarChar(32)
+  id         Int    @id @default(autoincrement())
+  user       User   @relation(fields: [userId], references: [id])
+  userId     Int
+  name       String @db.VarChar(32)
 
   @@unique([userId, name])
 
-  products Product[]
-  Series   Category[]
+  products   Product[]
+  categories Category[]
+  books      Book[]
 }
 
 enum UnitOfMeasurement {
@@ -86,7 +87,7 @@ model Category {
 
   @@unique([userId, name])
 
-  book              Book[]
+  books             Book[]
 }
 
 model Book {
@@ -95,5 +96,7 @@ model Book {
   userId     Int
   category   Category @relation(fields: [categoryId], references: [id])
   categoryId Int
-  number     String   @db.VarChar(16)
+  title      String   @db.VarChar(32)
+  location   Location @relation(fields: [locationId], references: [id])
+  locationId Int
 }

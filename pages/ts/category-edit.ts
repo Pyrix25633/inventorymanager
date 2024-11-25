@@ -27,14 +27,6 @@ class EditCategoryForm extends StructuredForm {
         nameInput.precompile(res.name);
         defaultLocationInput.precompile(res.defaultLocationId);
     }
-
-    async getData(): Promise<string | { [index: string]: any; }> {
-        const data: { [index: string]: any; } = {
-            name: await nameInput.parse(),
-            defaultLocationId: await defaultLocationInput.parse()
-        };
-        return JSON.stringify(data);
-    }
 }
 
 const editCategoryForm = new EditCategoryForm();

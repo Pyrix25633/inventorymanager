@@ -68,6 +68,13 @@ export function getName(raw: any): string {
     return parsed;
 }
 
+export function getTitle(raw: any): string {
+    const parsed = getString(raw);
+    if(parsed.length < 1 || parsed.length > 32)
+        throw new BadRequest();
+    return parsed;
+}
+
 export function getOrderValue(raw: any): OrderValue {
     const parsed: any = getObject(raw);
     const keys = Object.keys(parsed);

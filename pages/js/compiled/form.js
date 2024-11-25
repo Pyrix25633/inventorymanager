@@ -94,7 +94,7 @@ export class Button {
         this.button.style.display = show ? '' : 'none';
     }
 }
-class CancelButton extends Button {
+export class CancelButton extends Button {
     constructor() {
         super('Cancel', '/img/cancel.svg', true);
         const match = window.location.pathname.match(/(\/[^\/]+)+?/);
@@ -345,6 +345,37 @@ export class PasswordInput extends Input {
         return this.input.value != this.precompiledValue;
     }
 }
+export class StringInput extends Input {
+    constructor(id, labelText, feedbackText, minLength = 1, maxLength = 32) {
+        super(id, 'text', labelText, feedbackText);
+        this.minLength = minLength;
+        this.maxLength = maxLength;
+    }
+    async parse() {
+        const value = this.getInputValue();
+        if (value == this.precompiledValue) {
+            this.precompile(value);
+            return value;
+        }
+        if (value.length < this.minLength) {
+            this.setError(true, this.feedbackText.replace('Input ', '') + ' too short!');
+            return undefined;
+        }
+        if (value.length > this.maxLength) {
+            this.setError(true, this.feedbackText.replace('Input ', '') + ' too long!');
+            return undefined;
+        }
+        this.setError(false, 'Valid ' + this.feedbackText.replace('Input ', ''));
+        return value;
+    }
+    set(value) {
+        this.setInputValue(value);
+        this.parse();
+    }
+    changed() {
+        return this.input.value != this.precompiledValue;
+    }
+}
 export class BooleanInput extends InputElement {
     constructor(id, labelText, feedbackText, onSet = async () => { }) {
         super(id);
@@ -439,9 +470,14 @@ export class ApiFeedbackInput extends Input {
     }
 }
 export class DropdownInput extends InputElement {
-    constructor(id, labelText) {
+    constructor(id, labelText, onSelect) {
         super(id);
         this.labelText = labelText;
+        this.onSelect = (value) => {
+            if (typeof value == 'string' || typeof value == 'number')
+                localStorage.setItem(this.id + '-select', value.toString());
+            onSelect(value);
+        };
         this.select = document.createElement('select');
         this.select.id = id;
     }
@@ -473,6 +509,9 @@ export class DropdownInput extends InputElement {
                 option.value = value.toString();
         }
         option.innerText = text;
+        option.addEventListener('click', () => {
+            this.onSelect(value);
+        });
         this.select.appendChild(option);
     }
     precompile(value) {
@@ -480,13 +519,12 @@ export class DropdownInput extends InputElement {
             if (option instanceof HTMLOptionElement)
                 option.selected = option.value == value;
         }
-        if (typeof value == 'string' || typeof value == 'number')
-            localStorage.setItem(this.id + '-select', value.toString());
+        this.onSelect(value);
     }
 }
 export class ApiDropdownInput extends DropdownInput {
-    constructor(id, labelText, url) {
-        super(id, labelText);
+    constructor(id, labelText, url, onSelect = (id) => { }) {
+        super(id, labelText, onSelect);
         this.url = url;
         this.error = true;
     }

@@ -24,13 +24,6 @@ class EditLocationForm extends StructuredForm {
     precompile(res: Response): void {
         nameInput.precompile(res.name);
     }
-
-    async getData(): Promise<string | { [index: string]: any; }> {
-        const data: { [index: string]: any; } = {
-            name: await nameInput.parse()
-        };
-        return JSON.stringify(data);
-    }
 }
 
 const editLocationForm = new EditLocationForm();

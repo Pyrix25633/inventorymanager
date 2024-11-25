@@ -25,6 +25,8 @@ tags:
     description: Handles locations
   - name: categories
     description: Handles categories
+  - name: books
+    description: Handles books
 components:
   securitySchemes:
     cookieAuth:
@@ -93,6 +95,10 @@ components:
       type: string
       example: "data:image/svg+xml;base64,czY0OGI0bmcxNjViMjYrc3NjNDF2ZjJhKzR3ZjF2Y2EyYSsx..."
     name:
+      type: string
+      minLength: 3
+      maxLength: 32
+    title:
       type: string
       minLength: 3
       maxLength: 32
@@ -683,6 +689,17 @@ paths:
       summary: Creates a new location
       description: Creates a new location
       operationId: locations(post)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  $ref: "#/components/schemas/name"
+              required:
+                - name
       responses:
         "201":
           description: Location created succesfully
@@ -822,6 +839,20 @@ paths:
       summary: Creates a new category
       description: Creates a new category
       operationId: categories(post)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  $ref: "#/components/schemas/name"
+                defaultLocationId:
+                  $ref: "#/components/schemas/id"
+              required:
+                - name
+                - defaultLocationId
       responses:
         "201":
           description: Category created succesfully
@@ -910,3 +941,180 @@ paths:
           description: "Not Found: no categories found with specified categoryId"
         "422":
           description: "Unprocessable Content: category cannot be updated"
+  /books:
+    get:
+      tags:
+        - books
+      summary: Gets all books
+      description: Returns all books owned by the user
+      operationId: books(get)
+      parameters:
+        - in: query
+          name: page
+          schema:
+            $ref: "#/components/schemas/page"
+          required: false
+        - in: query
+          name: order
+          schema:
+            $ref: "#/components/schemas/order"
+          required: false
+          example:
+            - name: 'asc'
+            - defaultLocation:
+                name: 'desc'
+      responses:
+        "200":
+          description: All books of which the user is owner
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chats:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          $ref: "#/components/schemas/id"
+                        category:
+                          type: object
+                          properties:
+                            name:
+                              $ref: "#/components/schemas/name"
+                        title:
+                          $ref: "#/components/schemas/title"
+                        location:
+                          type: object
+                          properties:
+                            name:
+                              $ref: "#/components/schemas/name"
+                  pages:
+                    $ref: "#/components/schemas/pages"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+    post:
+      tags:
+        - books
+      summary: Creates a new book
+      description: Creates a new book
+      operationId: books(post)
+      responses:
+        "201":
+          description: Book created succesfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    $ref: "#/components/schemas/id"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "422":
+          description: "Unprocessable Content: book cannot be created"
+  /books/{bookId}:
+    get:
+      tags:
+        - books
+      summary: Gets book
+      description: Returns book's categoryId, title and locationId
+      operationId: books/[bookId](get)
+      parameters:
+        - in: path
+          name: bookId
+          schema:
+            $ref: "#/components/schemas/id"
+          required: true
+      responses:
+        "200":
+          description: CategoryId, title and locationId
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  categoryId:
+                    $ref: "#/components/schemas/id"
+                  title:
+                    $ref: "#/components/schemas/title"
+                  locationId:
+                    $ref: "#/components/schemas/id"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: "Forbidden: requesting user does not own requested book"
+        "404":
+          description: "Not Found: no books found with specified bookId"
+    patch:
+      tags:
+        - books
+      summary: Modifies the book
+      description: Updates the book's categoryId, title and locationId
+      operationId: books/[bookId](patch)
+      parameters:
+        - in: path
+          name: bookId
+          schema:
+            $ref: "#/components/schemas/id"
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                categoryId:
+                  $ref: "#/components/schemas/id"
+                title:
+                  $ref: "#/components/schemas/name"
+                locationId:
+                  $ref: "#/components/schemas/id"
+              required:
+                - categoryId
+                - title
+                - locationId
+      responses:
+        "204":
+          description: Book updated successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: "Forbidden: requesting user does not own requested book"
+        "404":
+          description: "Not Found: no books found with specified bookId"
+        "422":
+          description: "Unprocessable Content: book cannot be updated"
+    delete:
+      tags:
+        - books
+      summary: Deletes book
+      description: Removes the book
+      operationId: books/[bookId](delete)
+      parameters:
+        - in: path
+          name: bookId
+          schema:
+            $ref: "#/components/schemas/id"
+          required: true
+      responses:
+        "204":
+          description: Book deleted succesfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: "Forbidden: requesting user does not own requested book"
+        "404":
+          description: "Not Found: no books found with specified bookId"

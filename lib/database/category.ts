@@ -1,9 +1,8 @@
 import { Category } from "@prisma/client";
+import { settings } from "../settings";
 import { Order } from "../validation/semantic-validation";
 import { NotFound, UnprocessableContent } from "../web/response";
 import { prisma } from "./prisma";
-
-const pageSize = 10;
 
 export async function isCategoryNameInUse(userId: number, name: string): Promise<boolean> {
     return (await prisma.category.count({
@@ -43,13 +42,13 @@ export async function findCategories(userId: number, page: number | undefined, o
             userId: userId
         },
         orderBy: order,
-        skip: page != undefined ? page * pageSize : undefined,
-        take: page != undefined ? pageSize : undefined
+        skip: page != undefined ? page * settings.database.pageSize : undefined,
+        take: page != undefined ? settings.database.pageSize : undefined
     });
 }
 
 export async function countCategoriesPages(): Promise<number> {
-    return Math.ceil(await prisma.category.count() / pageSize);
+    return Math.ceil(await prisma.category.count() / settings.database.pageSize);
 }
 
 export async function findCategory(id: number): Promise<Category> {

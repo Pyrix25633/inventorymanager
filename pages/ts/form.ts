@@ -126,7 +126,7 @@ export class Button implements FormAppendable {
     }
 }
 
-class CancelButton extends Button {
+export class CancelButton extends Button {
     constructor() {
         super('Cancel', '/img/cancel.svg', true);
         const match = window.location.pathname.match(/(\/[^\/]+)+?/);
@@ -282,7 +282,7 @@ export abstract class Input<T> extends InputElement<T> {
     private formOrSection: Form | InputSection | undefined = undefined;
     public readonly input: HTMLInputElement;
     private readonly labelText: string;
-    private readonly feedbackText: string;
+    protected readonly feedbackText: string;
     private readonly feedback: HTMLSpanElement;
     private timeout: NodeJS.Timeout | undefined = undefined;
     private error: boolean = true;
@@ -421,6 +421,44 @@ export class PasswordInput extends Input<string> {
     }
 }
 
+export class StringInput extends Input<string> {
+    private readonly minLength: number;
+    private readonly maxLength: number;
+
+    constructor(id: string, labelText: string, feedbackText: string, minLength: number = 1, maxLength: number = 32) {
+        super(id, 'text', labelText, feedbackText);
+        this.minLength = minLength;
+        this.maxLength = maxLength;
+    }
+
+    async parse(): Promise<string | undefined> {
+        const value = this.getInputValue();
+        if(value == this.precompiledValue) {
+            this.precompile(value);
+            return value;
+        }
+        if(value.length < this.minLength) {
+            this.setError(true, this.feedbackText.replace('Input ', '') + ' too short!');
+            return undefined;
+        }
+        if(value.length > this.maxLength) {
+            this.setError(true, this.feedbackText.replace('Input ', '') + ' too long!');
+            return undefined;
+        }
+        this.setError(false, 'Valid ' + this.feedbackText.replace('Input ', ''));
+        return value;
+    }
+
+    set(value: string): void {
+        this.setInputValue(value);
+        this.parse();
+    }
+
+    changed(): boolean {
+        return this.input.value != this.precompiledValue;
+    }
+}
+
 type OnSet = (value: boolean) => Promise<void>;
 
 export class BooleanInput extends InputElement<boolean> {
@@ -534,13 +572,21 @@ export class ApiFeedbackInput extends Input<string> {
     }
 }
 
+type OnSelect<T> = (value: T) => void;
+
 export abstract class DropdownInput<T> extends InputElement<T> {
     protected readonly select: HTMLSelectElement;
     protected readonly labelText: string;
+    private readonly onSelect: OnSelect<T>;
 
-    constructor(id: string, labelText: string) {
+    constructor(id: string, labelText: string, onSelect: OnSelect<T>) {
         super(id);
         this.labelText = labelText;
+        this.onSelect = (value: T): void => {
+            if(typeof value == 'string' || typeof value == 'number')
+                localStorage.setItem(this.id + '-select', value.toString());
+            onSelect(value);
+        };
         this.select = document.createElement('select');
         this.select.id = id;
     }
@@ -570,7 +616,7 @@ export abstract class DropdownInput<T> extends InputElement<T> {
         return false;
     }
 
-    addOption(value: T, text: string) {
+    addOption(value: T, text: string): void {
         const option: HTMLOptionElement = document.createElement('option');
         switch(typeof value) {
             case 'string':
@@ -578,6 +624,9 @@ export abstract class DropdownInput<T> extends InputElement<T> {
                 option.value = value.toString();
         }
         option.innerText = text;
+        option.addEventListener('click', () => {
+            this.onSelect(value);
+        });
         this.select.appendChild(option);
     }
 
@@ -586,8 +635,7 @@ export abstract class DropdownInput<T> extends InputElement<T> {
             if(option instanceof HTMLOptionElement)
                 option.selected = option.value == value;
         }
-        if(typeof value == 'string' || typeof value == 'number')
-            localStorage.setItem(this.id + '-select', value.toString());
+        this.onSelect(value);
     }
 }
 
@@ -595,8 +643,8 @@ export class ApiDropdownInput extends DropdownInput<number> {
     private readonly url: string;
     private error: boolean;
 
-    constructor(id: string, labelText: string, url: string) {
-        super(id, labelText);
+    constructor(id: string, labelText: string, url: string, onSelect: OnSelect<number> = (id: number): void => {}) {
+        super(id, labelText, onSelect);
         this.url = url;
         this.error = true;
     }
