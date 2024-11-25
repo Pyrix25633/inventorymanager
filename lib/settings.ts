@@ -29,5 +29,8 @@ export const settings = {
             pass: ""
         }
     },
+    database: {
+        pageSize: 10
+    },
     production: false
 };
