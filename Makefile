@@ -17,8 +17,8 @@ fix-mysql:
 generate-certificate:
 > sudo iptables -t nat -F
 > sudo certbot certonly --standalone
-> sudo cp /etc/letsencrypt/live/simplychat.ddns.net/fullchain.pem ./certs/cert.pem
-> sudo cp /etc/letsencrypt/live/simplychat.ddns.net/privkey.pem ./certs/key.pem
+> sudo cp /etc/letsencrypt/live/inventorymanager.ddns.net/fullchain.pem ./certs/cert.pem
+> sudo cp /etc/letsencrypt/live/inventorymanager.ddns.net/privkey.pem ./certs/key.pem
 > make forward-ports
 
 generate-selfsigned-certificate:

@@ -128,23 +128,31 @@ main.delete('/api/books/:bookId', delBook);
 
 // --server-- //
 
-const options = {
-    key: fs.readFileSync(path.resolve(__dirname, settings.https.key)),
-    cert: fs.readFileSync(path.resolve(__dirname, settings.https.cert)),
-    passphrase: settings.https.passphrase
-};
-const server = https.createServer(options, main);
-server.listen(settings.https.port, (): void => {
-    console.log('Server listening on Port ' + settings.https.port);
-});
-upgradeMain.all('*', (req, res): void => {
-    const port = settings.production ? '' : (':' + settings.https.port);
-    res.redirect(301, 'https://' + req.hostname + port + req.url);
-});
-const upgradeServer = http.createServer(upgradeMain);
-upgradeServer.listen(settings.https.upgradePort, (): void => {
-    console.log('Upgrade Server listening on Port ' + settings.https.upgradePort);
-});
+if(settings.https.port != null) {
+    const options = {
+        key: fs.readFileSync(path.resolve(__dirname, settings.https.key)),
+        cert: fs.readFileSync(path.resolve(__dirname, settings.https.cert)),
+        passphrase: settings.https.passphrase
+    };
+    const server = https.createServer(options, main);
+    server.listen(settings.https.port, (): void => {
+        console.log('Server listening on Port ' + settings.https.port);
+    });
+    upgradeMain.all('*', (req, res): void => {
+        const port = settings.production ? '' : (':' + settings.https.port);
+        res.redirect(301, 'https://' + req.hostname + port + req.url);
+    });
+    const upgradeServer = http.createServer(upgradeMain);
+    upgradeServer.listen(settings.https.upgradePort, (): void => {
+        console.log('Upgrade Server listening on Port ' + settings.https.upgradePort);
+    });
+}
+else {
+    const server = http.createServer(main);
+    server.listen(settings.https.upgradePort, (): void => {
+        console.log('Server listening on Port ' + settings.https.upgradePort);
+    });
+}
 
 // --pages-- //
 
