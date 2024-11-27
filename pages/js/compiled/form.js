@@ -553,7 +553,7 @@ export class ApiDropdownInput extends DropdownInput {
                 label.innerText = this.labelText;
                 container.appendChild(label);
                 if (this.error) {
-                    const create = new RedirectButton('Create Location', '/img/create.svg', '/locations/create');
+                    const create = new RedirectButton('Create ' + this.labelText.replace(':', ''), '/img/create.svg', this.url + '/create');
                     create.appendTo(container);
                 }
                 else
