@@ -3,7 +3,7 @@ import { loadCustomization } from "./load-customization.js";
 import { defaultStatusCode } from "./utils.js";
 await loadCustomization();
 const nameInput = new ApiFeedbackInput('name', 'text', 'Name:', 'Input Category Name', '/api/feedbacks/category-name');
-const defaultLocationInput = new ApiDropdownInput('defaultLocationId', 'Name:', '/api/locations');
+const defaultLocationInput = new ApiDropdownInput('defaultLocationId', 'Default Location:', '/api/locations');
 class CreateCategoryForm extends StructuredForm {
     constructor() {
         super('category-create-form', '/api/categories', 'POST', [

@@ -7,7 +7,7 @@ await loadCustomization();
 const categoryId = getParameter(/^.+\/categories\/(\d+)\/edit.*$/);
 
 const nameInput = new ApiFeedbackInput('name', 'text', 'Name:', 'Input Category Name', '/api/feedbacks/category-name');
-const defaultLocationInput = new ApiDropdownInput('defaultLocationId', 'Name:', '/api/locations');
+const defaultLocationInput = new ApiDropdownInput('defaultLocationId', 'Default Location:', '/api/locations');
 
 class EditCategoryForm extends StructuredForm {
     constructor() {
