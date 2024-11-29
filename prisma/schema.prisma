@@ -26,7 +26,7 @@ model User {
 
   locations       Location[]
   products        Product[]
-  food            Food[]
+  stocks          Stock[]
   categories      Category[]
   books           Book[]
 }
@@ -62,19 +62,19 @@ model Product {
 
   @@unique([userId, name])
 
-  food                     Food[]
+  stocks                     Stock[]
 }
 
-model Food {
+model Stock {
   id                Int               @id @default(autoincrement())
   user              User              @relation(fields: [userId], references: [id])
   userId            Int
+  expiration        DateTime          @db.Date
   product           Product           @relation(fields: [productId], references: [id])
   productId         Int
   initialQuantity   Int               @db.UnsignedSmallInt
   currentQuantity   Int               @db.UnsignedSmallInt
   unitOfMeasurement UnitOfMeasurement
-  expiration        DateTime          @db.Date
 }
 
 model Category {

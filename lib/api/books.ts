@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { countBooksPages, createBook, deleteBook, findBook, findBooks, updateBook } from "../database/book";
+import { countBookPages, createBook, deleteBook, findBook, findBooks, updateBook } from "../database/book";
 import { findCategory } from "../database/category";
 import { findLocation } from "../database/location";
 import { getOrder, getTitle } from "../validation/semantic-validation";
@@ -13,7 +13,7 @@ export async function getBooks(req: Request, res: Response): Promise<void> {
         const page = getOrUndefined(req.query.page, getInt);
         const order = getOrUndefined(req.query.order, getOrder);
         const books = await findBooks(user.id, page, order);
-        const pages = await countBooksPages();
+        const pages = await countBookPages();
         new Ok({ books: books, pages: pages }).send(res);
     } catch(e: any) {
         handleException(e, res);
@@ -62,7 +62,7 @@ export async function patchBook(req: Request, res: Response): Promise<void> {
         const category = await findCategory(categoryId);
         if(category.userId != user.id)
             throw new UnprocessableContent();
-        const title = getTitle(body.name);
+        const title = getTitle(body.title);
         const locationId = getInt(body.locationId);
         const location = await findLocation(locationId);
         if(location.userId != user.id)

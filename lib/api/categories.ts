@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { countCategoriesPages, createCategory, findCategories, findCategory, updateCategory } from "../database/category";
+import { countCategoryPages, createCategory, findCategories, findCategory, updateCategory } from "../database/category";
 import { findLocation } from "../database/location";
 import { getName, getOrder } from "../validation/semantic-validation";
 import { getInt, getObject, getOrUndefined } from "../validation/type-validation";
@@ -12,7 +12,7 @@ export async function getCategories(req: Request, res: Response): Promise<void> 
         const page = getOrUndefined(req.query.page, getInt);
         const order = getOrUndefined(req.query.order, getOrder);
         const categories = await findCategories(user.id, page, order);
-        const pages = await countCategoriesPages();
+        const pages = await countCategoryPages();
         new Ok({ categories: categories, pages: pages }).send(res);
     } catch(e: any) {
         handleException(e, res);

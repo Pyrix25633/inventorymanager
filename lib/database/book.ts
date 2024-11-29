@@ -44,7 +44,7 @@ export async function findBooks(userId: number, page: number | undefined, order:
     });
 }
 
-export async function countBooksPages(): Promise<number> {
+export async function countBookPages(): Promise<number> {
     return Math.ceil(await prisma.book.count() / settings.database.pageSize);
 }
 
