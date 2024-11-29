@@ -17,7 +17,7 @@ export class Table {
         head.appendChild(this.headersRow);
         this.headers = headers;
         this.order = [];
-        this.addToOrder({ [headers[0].column]: 'asc' });
+        this.addToOrder({ [headers[0].column]: 'asc' }, false);
         for (const header of headers)
             header.appendTo(this);
         this.groups = groups;
@@ -62,11 +62,12 @@ export class Table {
         this.updateHeadersOrder();
         this.update();
     }
-    addToOrder(order) {
+    addToOrder(order, update = true) {
         this.removeFromOrder(Object.keys(order)[0], false);
         this.order.push(order);
         this.updateHeadersOrder();
-        this.update();
+        if (update)
+            this.update();
     }
     updateHeadersOrder() {
         for (const header of this.headers) {
