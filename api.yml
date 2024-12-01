@@ -23,6 +23,8 @@ tags:
     description: Handles user settings
   - name: locations
     description: Handles locations
+  - name: products
+    description: Handles products
   - name: categories
     description: Handles categories
   - name: books
@@ -98,6 +100,16 @@ components:
       type: string
       minLength: 3
       maxLength: 32
+    quantity:
+      type: integer
+      example: 5
+      minimum: 0
+    unitOfMeasurement:
+      type: string
+      enum:
+        - PIECES
+        - GRAMS
+        - MILLILITERS
     title:
       type: string
       minLength: 3
@@ -783,6 +795,184 @@ paths:
           description: "Not Found: no locations found with specified locationId"
         "422":
           description: "Unprocessable Content: location cannot be updated"
+  /products:
+    get:
+      tags:
+        - products
+      summary: Gets all products
+      description: Returns all products owned by the user
+      operationId: products(get)
+      parameters:
+        - in: query
+          name: page
+          schema:
+            $ref: "#/components/schemas/page"
+          required: false
+        - in: query
+          name: order
+          schema:
+            $ref: "#/components/schemas/order"
+          required: false
+          example:
+            - name: 'asc'
+            - defaultLocation:
+                name: 'desc'
+      responses:
+        "200":
+          description: All products of which the user is owner
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chats:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          $ref: "#/components/schemas/id"
+                        name:
+                          $ref: "#/components/schemas/name"
+                        defaultQuantity:
+                          $ref: "#/components/schemas/quantity"
+                        defaultUnitOfMeasurement:
+                          $ref: "#/components/schemas/unitOfMeasurement"
+                        defaultLocation:
+                          type: object
+                          properties:
+                            name:
+                              $ref: "#/components/schemas/name"
+                  pages:
+                    $ref: "#/components/schemas/pages"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+    post:
+      tags:
+        - products
+      summary: Creates a new product
+      description: Creates a new product
+      operationId: products(post)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  $ref: "#/components/schemas/name"
+                defaultQuantity:
+                  $ref: "#/components/schemas/quantity"
+                defaultUnitOfMeasurement:
+                  $ref: "#/components/schemas/unitOfMeasurement"
+                defaultLocationId:
+                  $ref: "#/components/schemas/id"
+              required:
+                - name
+                - defaultQuantity
+                - defaultUnitOfMeasurement
+                - defaultLocationId
+      responses:
+        "201":
+          description: Product created succesfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    $ref: "#/components/schemas/id"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "422":
+          description: "Unprocessable Content: product cannot be created"
+  /products/{productId}:
+    get:
+      tags:
+        - products
+      summary: Gets product
+      description: Returns products's name, defaultQuantity, defaultUnitOfMeasurement and defaultLocationId
+      operationId: products/[productId](get)
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            $ref: "#/components/schemas/id"
+          required: true
+      responses:
+        "200":
+          description: Name, defaultQuantity, defaultUnitOfMeasurement and defaultLocationId
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    $ref: "#/components/schemas/name"
+                  defaultQuantity:
+                    $ref: "#/components/schemas/quantity"
+                  defaultUnitOfMeasurement:
+                    $ref: "#/components/schemas/unitOfMeasurement"
+                  defaultLocationId:
+                    $ref: "#/components/schemas/id"
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: "Forbidden: requesting user does not own requested product"
+        "404":
+          description: "Not Found: no products found with specified productId"
+    patch:
+      tags:
+        - products
+      summary: Modifies the product
+      description: Updates the product's name, defaultQuantity, defaultUnitOfMeasurement and defaultLocationId
+      operationId: products/[productId](patch)
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            $ref: "#/components/schemas/id"
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  $ref: "#/components/schemas/name"
+                defaultQuantity:
+                  $ref: "#/components/schemas/quantity"
+                defaultUnitOfMeasurement:
+                  $ref: "#/components/schemas/unitOfMeasurement"
+                defaultLocationId:
+                  $ref: "#/components/schemas/id"
+              required:
+                - name
+                - defaultQuantity
+                - defaultUnitOfMeasurement
+                - defaultLocationId
+      responses:
+        "204":
+          description: Product updated successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "403":
+          description: "Forbidden: requesting user does not own requested product"
+        "404":
+          description: "Not Found: no products found with specified productId"
+        "422":
+          description: "Unprocessable Content: product cannot be updated"
   /categories:
     get:
       tags:

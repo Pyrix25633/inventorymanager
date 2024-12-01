@@ -12,6 +12,7 @@ import { delBook, getBook, getBooks, patchBook, postBook } from './lib/api/books
 import { getCategories, getCategory, patchCategory, postCategory } from './lib/api/categories';
 import { getCategoryNameFeedback, getConfirmUsernameFeedback, getLocationNameFeedback, getLoginUsernameFeedback, getRegisterEmailFeedback, getRegisterUsernameFeedback } from './lib/api/feedbacks';
 import { getLocation, getLocations, patchLocation, postLocation } from './lib/api/locations';
+import { getProduct, getProducts, patchProduct, postProduct } from './lib/api/products';
 import { getSettings, getSettingsCustomization, getSettingsId, patchSettings } from './lib/api/settings';
 import { postTempUser, postTempUserConfirm } from './lib/api/temp-users';
 import { settings } from './lib/settings';
@@ -103,6 +104,16 @@ main.post('/api/locations', postLocation);
 main.get('/api/locations/:locationId', getLocation);
 
 main.patch('/api/locations/:locationId', patchLocation);
+
+// products //
+
+main.get('/api/products', getProducts);
+
+main.post('/api/products', postProduct);
+
+main.get('/api/products/:productId', getProduct);
+
+main.patch('/api/products/:productId', patchProduct);
 
 // categories //
 

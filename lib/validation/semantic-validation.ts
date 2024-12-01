@@ -1,6 +1,7 @@
+import { UnitOfMeasurement } from "@prisma/client";
 import { Customization } from "../database/user";
 import { BadRequest } from "../web/response";
-import { getArray, getBoolean, getInt, getObject, getString } from "./type-validation";
+import { getArray, getBoolean, getInt, getNonEmptyString, getObject, getString } from "./type-validation";
 
 type OrderValue = { [index: string]: 'asc' | 'desc' | OrderValue; };
 export type Order = OrderValue[];
@@ -73,6 +74,21 @@ export function getTitle(raw: any): string {
     if(parsed.length < 1 || parsed.length > 32)
         throw new BadRequest();
     return parsed;
+}
+
+export function getQuantity(raw: any): number {
+    const parsed = getInt(raw);
+    if(parsed < 0)
+        throw new BadRequest();
+    return parsed;
+}
+
+export function getUnitOfMeasurement(raw: any): UnitOfMeasurement {
+    const parsed = getNonEmptyString(raw);
+    for(const role of Object.values(UnitOfMeasurement)) {
+        if(role == parsed) return role;
+    }
+    throw new BadRequest();
 }
 
 export function getOrderValue(raw: any): OrderValue {

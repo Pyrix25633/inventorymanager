@@ -47,7 +47,7 @@ model Location {
 enum UnitOfMeasurement {
   PIECES
   GRAMS
-  LITERS
+  MILLILITERS
 }
 
 model Product {

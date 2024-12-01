@@ -66,7 +66,7 @@ export async function findProduct(id: number): Promise<Product> {
     return product;
 }
 
-export async function updateCategory(id: number, name: string, defaultQuantity: number, defaultUnitOfMeasurement: UnitOfMeasurement, defaultLocationId: number): Promise<Product> {
+export async function updateProduct(id: number, name: string, defaultQuantity: number, defaultUnitOfMeasurement: UnitOfMeasurement, defaultLocationId: number): Promise<Product> {
     try {
         return await prisma.product.update({
             data: {
