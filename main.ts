@@ -61,6 +61,8 @@ main.get('/api/feedbacks/login-username', getLoginUsernameFeedback);
 
 main.get('/api/feedbacks/location-name', getLocationNameFeedback);
 
+main.get('/api/feedbacks/product-name', getLocationNameFeedback);
+
 main.get('/api/feedbacks/category-name', getCategoryNameFeedback);
 
 // temp-users //
@@ -201,23 +203,29 @@ main.get('/error', (req: Request, res: Response): void => {
 main.get('/locations', (req: Request, res: Response): void => {
     res.sendFile(path.resolve(__dirname, './pages/locations.html'));
 });
-
 main.get('/locations/create', (req: Request, res: Response): void => {
     res.sendFile(path.resolve(__dirname, './pages/location-create.html'));
 });
-
 main.get('/locations/:locationId/edit', (req: Request, res: Response): void => {
     res.sendFile(path.resolve(__dirname, './pages/location-edit.html'));
+});
+
+main.get('/products', (req: Request, res: Response): void => {
+    res.sendFile(path.resolve(__dirname, './pages/products.html'));
+});
+main.get('/products/create', (req: Request, res: Response): void => {
+    res.sendFile(path.resolve(__dirname, './pages/product-create.html'));
+});
+main.get('/products/:productId/edit', (req: Request, res: Response): void => {
+    res.sendFile(path.resolve(__dirname, './pages/product-edit.html'));
 });
 
 main.get('/categories', (req: Request, res: Response): void => {
     res.sendFile(path.resolve(__dirname, './pages/categories.html'));
 });
-
 main.get('/categories/create', (req: Request, res: Response): void => {
     res.sendFile(path.resolve(__dirname, './pages/category-create.html'));
 });
-
 main.get('/categories/:categoryId/edit', (req: Request, res: Response): void => {
     res.sendFile(path.resolve(__dirname, './pages/category-edit.html'));
 });
@@ -225,15 +233,12 @@ main.get('/categories/:categoryId/edit', (req: Request, res: Response): void => 
 main.get('/books', (req: Request, res: Response): void => {
     res.sendFile(path.resolve(__dirname, './pages/books.html'));
 });
-
 main.get('/books/create', (req: Request, res: Response): void => {
     res.sendFile(path.resolve(__dirname, './pages/book-create.html'));
 });
-
 main.get('/books/:bookId/edit', (req: Request, res: Response): void => {
     res.sendFile(path.resolve(__dirname, './pages/book-edit.html'));
 });
-
 main.get('/books/:bookId/delete', (req: Request, res: Response): void => {
     res.sendFile(path.resolve(__dirname, './pages/book-delete.html'));
 });

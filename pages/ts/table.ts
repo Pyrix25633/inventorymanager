@@ -1,3 +1,4 @@
+import { UnitOfMeasurement } from "./form.js";
 import { defaultStatusCode, RequireNonNull } from "./utils.js";
 
 type BaseOrderValue = 'asc' | 'desc' | undefined;
@@ -273,6 +274,21 @@ export class BooleanTableData extends TableData<boolean> {
 }
 
 export class NumberTableData extends TableData<number> {}
+
+export class QuantityTableData extends TableData<{ quantity: number; unitOfMeasurement: UnitOfMeasurement; }> {
+    public createTd(): HTMLTableCellElement {
+        const td = super.createTd();
+        if(this.value == null)
+            throw new Error('Invalid Quantity!');
+        td.innerText = this.value.quantity.toString() + ' ';
+        switch(this.value?.unitOfMeasurement) {
+            case UnitOfMeasurement.PIECES: td.innerText += 'pcs'; break;
+            case UnitOfMeasurement.GRAMS: td.innerText += 'g'; break;
+            default: td.innerText += 'ml';
+        }
+        return td;
+    }
+}
 
 export class LinkTableData extends TableData<string> {
     private readonly href: string;

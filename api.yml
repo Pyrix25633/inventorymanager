@@ -270,6 +270,33 @@ paths:
                     example: Valid Name
         "400":
           description: Bad Request
+  /feedbacks/product-name:
+    get:
+      tags:
+        - feedbacks
+      summary: Product's name feedback for the product creation form
+      description: Returns a user friendly product's name feedback
+      operationId: feedbacks/product-name
+      parameters:
+        - in: query
+          name: name
+          schema:
+            $ref: "#/components/schemas/name"
+          description: The product's name
+          required: true
+      responses:
+        "200":
+          description: Product's name feedback
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  feedback:
+                    type: string
+                    example: Valid Name
+        "400":
+          description: Bad Request
   /feedbacks/category-name:
     get:
       tags:

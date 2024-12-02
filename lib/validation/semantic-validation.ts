@@ -85,8 +85,9 @@ export function getQuantity(raw: any): number {
 
 export function getUnitOfMeasurement(raw: any): UnitOfMeasurement {
     const parsed = getNonEmptyString(raw);
-    for(const role of Object.values(UnitOfMeasurement)) {
-        if(role == parsed) return role;
+    for(const unitOfMeasurement of Object.values(UnitOfMeasurement)) {
+        if(unitOfMeasurement == parsed)
+            return unitOfMeasurement;
     }
     throw new BadRequest();
 }

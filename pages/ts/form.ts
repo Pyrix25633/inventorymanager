@@ -532,6 +532,40 @@ export class BooleanInput extends InputElement<boolean> {
     }
 }
 
+export class QuantityInput extends Input<number> {
+    constructor(id: string, labelText: string, feedbackText: string) {
+        super(id, 'number', labelText, feedbackText);
+        this.input.classList.add('medium');
+    }
+
+    async parse(): Promise<number | undefined> {
+        const quantity: number = parseInt(this.getInputValue());
+        if(quantity == this.precompiledValue) {
+            this.precompile(quantity);
+            return quantity;
+        }
+        if(isNaN(quantity)) {
+            this.setError(true, this.feedbackText.replace('Input ', '') + ' is not a number!');
+            return undefined;
+        }
+        if(quantity < 0) {
+            this.setError(true, this.feedbackText.replace('Input ', '') + ' cannot be negative!');
+            return undefined;
+        }
+        this.setError(false, 'Valid ' + this.feedbackText.replace('Input ', ''));
+        return quantity;
+    }
+
+    set(value: number): void {
+        this.setInputValue(value.toString());
+        this.parse();
+    }
+
+    changed(): boolean {
+        return parseInt(this.input.value) != this.precompiledValue;
+    }
+}
+
 export class ApiFeedbackInput extends Input<string> {
     private readonly url: string;
 
@@ -636,6 +670,29 @@ export abstract class DropdownInput<T> extends InputElement<T> {
                 option.selected = option.value == value;
         }
         this.onSelect(value);
+    }
+}
+
+export enum UnitOfMeasurement {
+    PIECES = 'PIECES',
+    GRAMS = 'GRAMS',
+    MILLILITERS = 'MILLILITERS'
+}
+
+export class UnitOfMeasurementInput extends DropdownInput<UnitOfMeasurement> {
+    constructor(id: string, labelText: string) {
+        super(id, labelText, (): void => {});
+        this.addOption(UnitOfMeasurement.PIECES, 'pcs');
+        this.addOption(UnitOfMeasurement.GRAMS, 'g');
+        this.addOption(UnitOfMeasurement.MILLILITERS, 'ml');
+    }
+
+    parseValue(value: string): UnitOfMeasurement {
+        for(const unitOfMeasurement of Object.values(UnitOfMeasurement)) {
+            if(unitOfMeasurement == value)
+                return unitOfMeasurement;
+        }
+        return UnitOfMeasurement.PIECES;
     }
 }
 

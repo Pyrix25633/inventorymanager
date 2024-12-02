@@ -434,6 +434,36 @@ export class BooleanInput extends InputElement {
         return this.slider.classList.contains('on') != this.precompiledValue;
     }
 }
+export class QuantityInput extends Input {
+    constructor(id, labelText, feedbackText) {
+        super(id, 'number', labelText, feedbackText);
+        this.input.classList.add('medium');
+    }
+    async parse() {
+        const quantity = parseInt(this.getInputValue());
+        if (quantity == this.precompiledValue) {
+            this.precompile(quantity);
+            return quantity;
+        }
+        if (isNaN(quantity)) {
+            this.setError(true, this.feedbackText.replace('Input ', '') + ' is not a number!');
+            return undefined;
+        }
+        if (quantity < 0) {
+            this.setError(true, this.feedbackText.replace('Input ', '') + ' cannot be negative!');
+            return undefined;
+        }
+        this.setError(false, 'Valid ' + this.feedbackText.replace('Input ', ''));
+        return quantity;
+    }
+    set(value) {
+        this.setInputValue(value.toString());
+        this.parse();
+    }
+    changed() {
+        return parseInt(this.input.value) != this.precompiledValue;
+    }
+}
 export class ApiFeedbackInput extends Input {
     constructor(id, type, labelText, feedbackText, url) {
         super(id, type, labelText, feedbackText);
@@ -520,6 +550,27 @@ export class DropdownInput extends InputElement {
                 option.selected = option.value == value;
         }
         this.onSelect(value);
+    }
+}
+export var UnitOfMeasurement;
+(function (UnitOfMeasurement) {
+    UnitOfMeasurement["PIECES"] = "PIECES";
+    UnitOfMeasurement["GRAMS"] = "GRAMS";
+    UnitOfMeasurement["MILLILITERS"] = "MILLILITERS";
+})(UnitOfMeasurement || (UnitOfMeasurement = {}));
+export class UnitOfMeasurementInput extends DropdownInput {
+    constructor(id, labelText) {
+        super(id, labelText, () => { });
+        this.addOption(UnitOfMeasurement.PIECES, 'pcs');
+        this.addOption(UnitOfMeasurement.GRAMS, 'g');
+        this.addOption(UnitOfMeasurement.MILLILITERS, 'ml');
+    }
+    parseValue(value) {
+        for (const unitOfMeasurement of Object.values(UnitOfMeasurement)) {
+            if (unitOfMeasurement == value)
+                return unitOfMeasurement;
+        }
+        return UnitOfMeasurement.PIECES;
     }
 }
 export class ApiDropdownInput extends DropdownInput {

@@ -1,3 +1,4 @@
+import { UnitOfMeasurement } from "./form.js";
 import { defaultStatusCode, RequireNonNull } from "./utils.js";
 export class Table {
     constructor(url, resourceName, groups, headers, footer = true) {
@@ -216,6 +217,25 @@ export class BooleanTableData extends TableData {
     }
 }
 export class NumberTableData extends TableData {
+}
+export class QuantityTableData extends TableData {
+    createTd() {
+        var _a;
+        const td = super.createTd();
+        if (this.value == null)
+            throw new Error('Invalid Quantity!');
+        td.innerText = this.value.quantity.toString() + ' ';
+        switch ((_a = this.value) === null || _a === void 0 ? void 0 : _a.unitOfMeasurement) {
+            case UnitOfMeasurement.PIECES:
+                td.innerText += 'pcs';
+                break;
+            case UnitOfMeasurement.GRAMS:
+                td.innerText += 'g';
+                break;
+            default: td.innerText += 'ml';
+        }
+        return td;
+    }
 }
 export class LinkTableData extends TableData {
     constructor(value, href) {

@@ -12,9 +12,9 @@ export async function getProducts(req: Request, res: Response): Promise<void> {
         const user = await validateToken(req);
         const page = getOrUndefined(req.query.page, getInt);
         const order = getOrUndefined(req.query.order, getOrder);
-        const categories = await findProducts(user.id, page, order);
+        const products = await findProducts(user.id, page, order);
         const pages = await countProductPages();
-        new Ok({ categories: categories, pages: pages }).send(res);
+        new Ok({ products: products, pages: pages }).send(res);
     } catch(e: any) {
         handleException(e, res);
     }
@@ -41,7 +41,7 @@ export async function postProduct(req: Request, res: Response): Promise<void> {
 export async function getProduct(req: Request, res: Response): Promise<void> {
     try {
         const user = await validateToken(req);
-        const id = getInt(req.params.product);
+        const id = getInt(req.params.productId);
         const product = await findProduct(id);
         if(product.userId != user.id)
             throw new Forbidden();

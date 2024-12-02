@@ -7,7 +7,7 @@ class CategoriesTable extends Table {
     constructor() {
         super('/api/categories', 'categories', null, [
             new TableHeader('Name', 'name'),
-            new TableHeader('Default Location', 'defaultLocation[name]'),
+            new TableHeader('Default Location', 'defaultLocation][name'),
             new LinkTableHeader('Edit')
         ]);
     }
