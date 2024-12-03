@@ -14,6 +14,7 @@ import { getCategoryNameFeedback, getConfirmUsernameFeedback, getLocationNameFee
 import { getLocation, getLocations, patchLocation, postLocation } from './lib/api/locations';
 import { getProduct, getProducts, patchProduct, postProduct } from './lib/api/products';
 import { getSettings, getSettingsCustomization, getSettingsId, patchSettings } from './lib/api/settings';
+import { delStock, getStock, getStocks, patchStock, postStock } from './lib/api/stocks';
 import { postTempUser, postTempUserConfirm } from './lib/api/temp-users';
 import { settings } from './lib/settings';
 
@@ -116,6 +117,18 @@ main.post('/api/products', postProduct);
 main.get('/api/products/:productId', getProduct);
 
 main.patch('/api/products/:productId', patchProduct);
+
+// stocks //
+
+main.get('/api/stocks', getStocks);
+
+main.post('/api/stocks', postStock);
+
+main.get('/api/stocks/:stockId', getStock);
+
+main.patch('/api/stocks/:stockId', patchStock);
+
+main.delete('/api/stocks/:stockId', delStock);
 
 // categories //
 

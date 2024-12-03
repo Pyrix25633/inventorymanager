@@ -92,6 +92,16 @@ export function getUnitOfMeasurement(raw: any): UnitOfMeasurement {
     throw new BadRequest();
 }
 
+export function getDate(raw: any): Date {
+    const parsed = getString(raw);
+    if(!parsed.match(/\d{4}\/\d{1,2}\/\d{1,2}/))
+        throw new BadRequest();
+    const date = new Date(parsed);
+    if(date.toString() == 'Invalid Date' || isNaN(date.getTime()))
+        throw new BadRequest();
+    return date;
+}
+
 export function getOrderValue(raw: any): OrderValue {
     const parsed: any = getObject(raw);
     const keys = Object.keys(parsed);

@@ -6,6 +6,6 @@ GRANT SELECT, INSERT, DELETE ON TempUser TO 'InventoryManager'@'localhost';
 GRANT SELECT, INSERT, UPDATE ON User TO 'InventoryManager'@'localhost';
 GRANT SELECT, INSERT, UPDATE ON Location TO 'InventoryManager'@'localhost';
 GRANT SELECT, INSERT, UPDATE ON Product TO 'InventoryManager'@'localhost';
-GRANT SELECT, INSERT, UPDATE, DELETE ON Food TO 'InventoryManager'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON Stock TO 'InventoryManager'@'localhost';
 GRANT SELECT, INSERT, UPDATE ON Category TO 'InventoryManager'@'localhost';
 GRANT SELECT, INSERT, UPDATE, DELETE ON Book TO 'InventoryManager'@'localhost';

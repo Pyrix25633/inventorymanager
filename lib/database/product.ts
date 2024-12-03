@@ -29,7 +29,7 @@ export async function createProduct(userId: number, name: string, defaultQuantit
     }
 }
 
-export async function findProducts(userId: number, page: number | undefined, order: Order | undefined): Promise<{ name: string; defaultQuantity: number; defaultUnitOfMeasurement: UnitOfMeasurement, defaultLocation: { name: string; } }[]> {
+export async function findProducts(userId: number, page: number | undefined, order: Order | undefined): Promise<{ name: string; defaultQuantity: number; defaultUnitOfMeasurement: UnitOfMeasurement, defaultLocation: { name: string; }; }[]> {
     return prisma.product.findMany({
         select: {
             id: true,
