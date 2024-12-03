@@ -1,7 +1,6 @@
 import { RedirectButton } from "./form.js";
 import { loadCustomization } from "./load-customization.js";
 import { IconLinkTableData, LinkTableHeader, StringTableData, Table, TableHeader, TableRow } from "./table.js";
-import { RequireNonNull } from "./utils.js";
 await loadCustomization();
 class BooksTable extends Table {
     constructor() {
@@ -30,4 +29,4 @@ class BooksTableRow extends TableRow {
 }
 const booksTable = new BooksTable();
 const createButton = new RedirectButton('Create Book', '/img/create.svg', '/books/create');
-createButton.appendTo(RequireNonNull.getElementById('books'));
+const backButton = new RedirectButton('Back', '/img/back.svg', '/');

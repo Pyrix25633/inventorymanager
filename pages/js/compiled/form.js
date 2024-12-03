@@ -105,12 +105,14 @@ export class CancelButton extends Button {
     }
 }
 export class RedirectButton extends Button {
-    constructor(text, iconSrc, url) {
-        super(text, iconSrc, false);
+    constructor(text, iconSrc, url, inFooter = true) {
+        super(text, iconSrc, true);
         this.setDisabled(false);
         this.addClickListener(() => {
             window.location.href = url;
         });
+        if (inFooter)
+            this.appendTo(RequireNonNull.getElementById('footer'));
     }
 }
 export class ActionButton extends Button {

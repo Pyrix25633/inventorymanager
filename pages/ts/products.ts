@@ -1,7 +1,6 @@
 import { RedirectButton, UnitOfMeasurement } from "./form.js";
 import { loadCustomization } from "./load-customization.js";
 import { IconLinkTableData, LinkTableHeader, QuantityTableData, StringTableData, Table, TableData, TableHeader, TableRow } from "./table.js";
-import { RequireNonNull } from "./utils.js";
 
 await loadCustomization();
 
@@ -42,4 +41,4 @@ class ProductsTableRow extends TableRow {
 const productsTable = new ProductsTable();
 
 const createButton = new RedirectButton('Create Product', '/img/create.svg', '/products/create');
-createButton.appendTo(RequireNonNull.getElementById('products'));
+const backButton = new RedirectButton('Back', '/img/back.svg', '/');
