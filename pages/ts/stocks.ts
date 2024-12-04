@@ -21,9 +21,9 @@ class StocksTable extends Table {
             new TableHeader('Product', 'product][name'),
             new TableHeader('Quantity', 'quantity'),
             new TableHeader('Location', 'location][name'),
-            new LinkTableHeader('Decrease'),
-            new LinkTableHeader('Edit'),
             new LinkTableHeader('Remove'),
+            new LinkTableHeader('Edit'),
+            new LinkTableHeader('Delete'),
         ]);
     }
 
