@@ -10,7 +10,7 @@ import path from 'path';
 import { getTfaGenerateKey, getTfaValidateCode, getValidateToken, postLogin, postLoginTfa, postLogout, postRegenerateToken } from './lib/api/auth';
 import { delBook, getBook, getBooks, patchBook, postBook } from './lib/api/books';
 import { getCategories, getCategory, patchCategory, postCategory } from './lib/api/categories';
-import { getCategoryNameFeedback, getConfirmUsernameFeedback, getLocationNameFeedback, getLoginUsernameFeedback, getRegisterEmailFeedback, getRegisterUsernameFeedback } from './lib/api/feedbacks';
+import { getCategoryNameFeedback, getConfirmUsernameFeedback, getLocationNameFeedback, getLoginUsernameFeedback, getProductNameFeedback, getRegisterEmailFeedback, getRegisterUsernameFeedback } from './lib/api/feedbacks';
 import { getLocation, getLocations, patchLocation, postLocation } from './lib/api/locations';
 import { getProduct, getProducts, patchProduct, postProduct } from './lib/api/products';
 import { getSettings, getSettingsCustomization, getSettingsId, patchSettings } from './lib/api/settings';
@@ -62,7 +62,7 @@ main.get('/api/feedbacks/login-username', getLoginUsernameFeedback);
 
 main.get('/api/feedbacks/location-name', getLocationNameFeedback);
 
-main.get('/api/feedbacks/product-name', getLocationNameFeedback);
+main.get('/api/feedbacks/product-name', getProductNameFeedback);
 
 main.get('/api/feedbacks/category-name', getCategoryNameFeedback);
 

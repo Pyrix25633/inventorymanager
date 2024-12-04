@@ -541,16 +541,15 @@ export class DropdownInput extends InputElement {
         const label = document.createElement('label');
         label.htmlFor = this.id;
         label.innerText = this.labelText;
+        this.select.addEventListener('change', async () => {
+            this.onSelect(await this.parse());
+        });
         container.appendChild(label);
         container.appendChild(this.select);
         formOrSection.appendChild(container);
     }
     async parse() {
-        for (const option of this.select.childNodes) {
-            if (option instanceof HTMLOptionElement && option.selected)
-                return this.parseValue(option.value);
-        }
-        throw new Error("No option selected");
+        return this.parseValue(this.select.value);
     }
     getError() {
         return false;
@@ -563,9 +562,6 @@ export class DropdownInput extends InputElement {
                 option.value = value.toString();
         }
         option.innerText = text;
-        option.addEventListener('click', () => {
-            this.onSelect(value);
-        });
         this.select.appendChild(option);
     }
     precompile(value) {
@@ -588,6 +584,9 @@ export class UnitOfMeasurementInput extends DropdownInput {
         this.addOption(UnitOfMeasurement.PIECES, 'pcs');
         this.addOption(UnitOfMeasurement.GRAMS, 'g');
         this.addOption(UnitOfMeasurement.MILLILITERS, 'ml');
+        const last = localStorage.getItem(this.id + '-select');
+        if (last != null)
+            this.precompile(this.parseValue(last));
     }
     parseValue(value) {
         for (const unitOfMeasurement of Object.values(UnitOfMeasurement)) {
@@ -610,6 +609,9 @@ export class ApiDropdownInput extends DropdownInput {
         $.ajax({
             url: this.url,
             method: 'GET',
+            data: {
+                order: [{ name: 'asc' }]
+            },
             success: (res) => {
                 const match = this.url.match(/(?:\/([^\/]+))+?$/);
                 if (match == null)
@@ -622,6 +624,8 @@ export class ApiDropdownInput extends DropdownInput {
                 const last = localStorage.getItem(this.id + '-select');
                 if (last != null)
                     this.precompile(this.parseValue(last));
+                else if (!this.error)
+                    this.precompile(res[index][0].id);
                 formOrSection.validate();
                 const label = document.createElement('label');
                 label.htmlFor = this.id;
@@ -631,8 +635,12 @@ export class ApiDropdownInput extends DropdownInput {
                     const create = new RedirectButton('Create ' + this.labelText.replace(':', '').replace('Default ', ''), '/img/create.svg', this.url.replace('/api', '') + '/create');
                     create.appendTo(container);
                 }
-                else
+                else {
+                    this.select.addEventListener('change', async () => {
+                        this.onSelect(await this.parse());
+                    });
                     container.appendChild(this.select);
+                }
             },
             error: (req, err) => {
                 console.error(err);

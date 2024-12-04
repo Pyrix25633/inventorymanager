@@ -6,7 +6,7 @@ const stockId = getParameter(/^.+\/stocks\/(\d+)\/delete.*$/);
 class DeleteStockForm extends StructuredForm {
     constructor() {
         super('stock-delete-form', '/api/stocks/{stockId}', 'DELETE', [], new Button('Delete', '/img/confirm.svg', true), (res) => {
-            window.location.href = '/books';
+            window.location.href = '/stocks';
         }, defaultStatusCode, undefined);
     }
     async getUrl() {

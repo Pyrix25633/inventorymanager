@@ -638,7 +638,7 @@ type OnSelect<T> = (value: T) => void;
 export abstract class DropdownInput<T> extends InputElement<T> {
     protected readonly select: HTMLSelectElement;
     protected readonly labelText: string;
-    private readonly onSelect: OnSelect<T>;
+    protected readonly onSelect: OnSelect<T>;
 
     constructor(id: string, labelText: string, onSelect: OnSelect<T>) {
         super(id);
@@ -658,6 +658,9 @@ export abstract class DropdownInput<T> extends InputElement<T> {
         const label = document.createElement('label');
         label.htmlFor = this.id;
         label.innerText = this.labelText;
+        this.select.addEventListener('change', async (): Promise<void> => {
+            this.onSelect(await this.parse());
+        });
         container.appendChild(label);
         container.appendChild(this.select);
         formOrSection.appendChild(container);
@@ -666,11 +669,7 @@ export abstract class DropdownInput<T> extends InputElement<T> {
     abstract parseValue(value: string): T;
 
     async parse(): Promise<T> {
-        for(const option of this.select.childNodes) {
-            if(option instanceof HTMLOptionElement && option.selected)
-                return this.parseValue(option.value);
-        }
-        throw new Error("No option selected");
+        return this.parseValue(this.select.value);
     }
 
     getError(): boolean {
@@ -685,9 +684,6 @@ export abstract class DropdownInput<T> extends InputElement<T> {
                 option.value = value.toString();
         }
         option.innerText = text;
-        option.addEventListener('click', () => {
-            this.onSelect(value);
-        });
         this.select.appendChild(option);
     }
 
@@ -712,6 +708,9 @@ export class UnitOfMeasurementInput extends DropdownInput<UnitOfMeasurement> {
         this.addOption(UnitOfMeasurement.PIECES, 'pcs');
         this.addOption(UnitOfMeasurement.GRAMS, 'g');
         this.addOption(UnitOfMeasurement.MILLILITERS, 'ml');
+        const last: string | null = localStorage.getItem(this.id + '-select');
+        if(last != null)
+            this.precompile(this.parseValue(last));
     }
 
     parseValue(value: string): UnitOfMeasurement {
@@ -740,6 +739,9 @@ export class ApiDropdownInput extends DropdownInput<number> {
         $.ajax({
             url: this.url,
             method: 'GET',
+            data: {
+                order: [ { name: 'asc' } ]
+            },
             success: (res: { [index: string]: { id: number; name: string; }[] }) => {
                 const match = this.url.match(/(?:\/([^\/]+))+?$/);
                 if(match == null)
@@ -752,6 +754,8 @@ export class ApiDropdownInput extends DropdownInput<number> {
                 const last: string | null = localStorage.getItem(this.id + '-select');
                 if(last != null)
                     this.precompile(this.parseValue(last));
+                else if(!this.error)
+                    this.precompile(res[index][0].id);
                 formOrSection.validate();
                 const label = document.createElement('label');
                 label.htmlFor = this.id;
@@ -761,8 +765,12 @@ export class ApiDropdownInput extends DropdownInput<number> {
                     const create = new RedirectButton('Create ' + this.labelText.replace(':', '').replace('Default ', ''), '/img/create.svg', this.url.replace('/api', '') + '/create');
                     create.appendTo(container);
                 }
-                else
+                else {
+                    this.select.addEventListener('change', async (): Promise<void> => {
+                        this.onSelect(await this.parse());
+                    });
                     container.appendChild(this.select);
+                }
             },
             error: (req, err) => {
                 console.error(err);

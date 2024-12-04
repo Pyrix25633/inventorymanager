@@ -6,7 +6,7 @@ await loadCustomization();
 
 const productId = getParameter(/^.+\/products\/(\d+)\/edit.*$/);
 
-const nameInput = new ApiFeedbackInput('name', 'text', 'Name:', 'Input Category Name', '/api/feedbacks/category-name');
+const nameInput = new ApiFeedbackInput('name', 'text', 'Name:', 'Input Product Name', '/api/feedbacks/product-name');
 const defaultQuantityInput = new QuantityInput('defaultQuantity', 'Default Quantity', 'Input Quantity');
 const defaultUnitOfMeasurementInput = new UnitOfMeasurementInput('defaultUnitOfMeasurement', 'Default Unit of Measurement');
 const defaultLocationInput = new ApiDropdownInput('defaultLocationId', 'Default Location:', '/api/locations');
