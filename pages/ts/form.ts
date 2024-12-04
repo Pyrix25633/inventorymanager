@@ -149,7 +149,7 @@ export class RedirectButton extends Button {
     }
 }
 
-type Action = () => void;
+export type Action = () => void;
 
 export class ActionButton extends Button {
     private readonly feedbackText: string;
@@ -550,8 +550,8 @@ export class QuantityInput extends Input<number> {
             this.setError(true, this.feedbackText.replace('Input ', '') + ' is not a number!');
             return undefined;
         }
-        if(quantity < 0) {
-            this.setError(true, this.feedbackText.replace('Input ', '') + ' cannot be negative!');
+        if(quantity <= 0) {
+            this.setError(true, this.feedbackText.replace('Input ', '') + ' must be a positive number!');
             return undefined;
         }
         this.setError(false, 'Valid ' + this.feedbackText.replace('Input ', ''));
@@ -565,6 +565,31 @@ export class QuantityInput extends Input<number> {
 
     changed(): boolean {
         return parseInt(this.input.value) != this.precompiledValue;
+    }
+}
+
+export class ExpirationInput extends Input<string> {
+    private static readonly format: string = '(YYYY/MM/DD)';
+
+    constructor(id: string, labelText: string, feedbackText: string) {
+        super(id, 'text', labelText, feedbackText + ' ' + ExpirationInput.format);
+        this.input.classList.add("date");
+    }
+
+    async parse(): Promise<string | undefined> {
+        const expiration: string = this.input.value;
+        if(expiration == this.precompiledValue) {
+            this.precompile(expiration);
+            return expiration;
+        }
+        const tokenExpirationMatch = expiration.match(/\d{4}\/\d{1,2}\/\d{1,2}/);
+        const tokenExpirationDate = new Date(expiration);
+        if(tokenExpirationMatch == null || tokenExpirationDate.toString() == 'Invalid Date' || isNaN(tokenExpirationDate.getTime())) {
+            this.setError(true, 'Invalid ' + this.feedbackText.replace('Input ', '').replace(ExpirationInput.format, ''));
+            return undefined;
+        }
+        this.setError(false, 'Valid ' + this.feedbackText.replace('Input ', '').replace(ExpirationInput.format, ''));
+        return expiration;
     }
 }
 

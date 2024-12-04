@@ -78,7 +78,7 @@ export function getTitle(raw: any): string {
 
 export function getQuantity(raw: any): number {
     const parsed = getInt(raw);
-    if(parsed < 0)
+    if(parsed <= 0)
         throw new BadRequest();
     return parsed;
 }
@@ -96,7 +96,7 @@ export function getDate(raw: any): Date {
     const parsed = getString(raw);
     if(!parsed.match(/\d{4}\/\d{1,2}\/\d{1,2}/))
         throw new BadRequest();
-    const date = new Date(parsed);
+    const date = new Date(parsed + ' UTC');
     if(date.toString() == 'Invalid Date' || isNaN(date.getTime()))
         throw new BadRequest();
     return date;

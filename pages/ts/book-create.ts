@@ -9,7 +9,7 @@ const categoryInput = new ApiDropdownInput('categoryId', 'Category:', '/api/cate
         url: '/api/categories/' + id,
         method: 'GET',
         contentType: 'application/json',
-        success: (res: { defaultLocationId: number; }): void => {
+        success: (res: Response): void => {
             locationInput.precompile(res.defaultLocationId);
         },
         statusCode: defaultStatusCode

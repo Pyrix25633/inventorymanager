@@ -4,18 +4,18 @@ import { Response, defaultStatusCode, getParameter } from "./utils.js";
 
 await loadCustomization();
 
-const bookId = getParameter(/^.+\/books\/(\d+)\/delete.*$/);
+const stockId = getParameter(/^.+\/stocks\/(\d+)\/delete.*$/);
 
-class DeleteBookForm extends StructuredForm {
+class DeleteStockForm extends StructuredForm {
     constructor() {
-        super('book-delete-form', '/api/books/{bookId}', 'DELETE', [], new Button('Delete', '/img/confirm.svg', true), (res: Response): void => {
+        super('stock-delete-form', '/api/stocks/{stockId}', 'DELETE', [], new Button('Delete', '/img/confirm.svg', true), (res: Response): void => {
             window.location.href = '/books';
         }, defaultStatusCode, undefined);
     }
 
     async getUrl(): Promise<string> {
-        return this.url.replace('{bookId}', bookId);
+        return this.url.replace('{stockId}', stockId);
     }
 }
 
-const deleteBookForm = new DeleteBookForm();
+const deleteStockForm = new DeleteStockForm();

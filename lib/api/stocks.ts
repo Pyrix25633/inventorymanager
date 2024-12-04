@@ -1,8 +1,8 @@
+import { UnitOfMeasurement } from "@prisma/client";
 import { Request, Response } from "express";
-import { countBookPages, deleteBook, findBooks } from "../database/book";
 import { findLocation } from "../database/location";
 import { findProduct } from "../database/product";
-import { createStock, findStock, updateStock } from "../database/stock";
+import { countStocksPages, createStock, deleteStock, findStock, findStocks, updateStock, updateStockQuantity } from "../database/stock";
 import { getDate, getOrder, getQuantity, getUnitOfMeasurement } from "../validation/semantic-validation";
 import { getInt, getObject, getOrUndefined } from "../validation/type-validation";
 import { Created, Forbidden, handleException, NoContent, Ok, UnprocessableContent } from "../web/response";
@@ -13,8 +13,8 @@ export async function getStocks(req: Request, res: Response): Promise<void> {
         const user = await validateToken(req);
         const page = getOrUndefined(req.query.page, getInt);
         const order = getOrUndefined(req.query.order, getOrder);
-        const stocks = await findBooks(user.id, page, order);
-        const pages = await countBookPages();
+        const stocks = await findStocks(user.id, page, order);
+        const pages = await countStocksPages();
         new Ok({ stocks: stocks, pages: pages }).send(res);
     } catch(e: any) {
         handleException(e, res);
@@ -26,7 +26,7 @@ export async function postStock(req: Request, res: Response): Promise<void> {
         const user = await validateToken(req);
         const body = getObject(req.body);
         const expiration = getDate(body.expiration);
-        const productId = getInt(body.categoryId);
+        const productId = getInt(body.productId);
         const product = await findProduct(productId);
         if(product.userId != user.id)
             throw new UnprocessableContent();
@@ -62,7 +62,7 @@ export async function patchStock(req: Request, res: Response): Promise<void> {
         const id = getInt(req.params.stockId);
         const body = getObject(req.body);
         const expiration = getDate(body.expiration);
-        const productId = getInt(body.categoryId);
+        const productId = getInt(body.productId);
         const product = await findProduct(productId);
         if(product.userId != user.id)
             throw new UnprocessableContent();
@@ -86,7 +86,24 @@ export async function delStock(req: Request, res: Response): Promise<void> {
         const stock = await findStock(id);
         if(stock.userId != user.id)
             throw new Forbidden();
-        await deleteBook(id);
+        await deleteStock(id);
+        new NoContent().send(res);
+    } catch(e: any) {
+        handleException(e, res);
+    }
+}
+
+export async function postRemoveStock(req: Request, res: Response): Promise<void> {
+    try {
+        const user = await validateToken(req);
+        const id = getInt(req.params.stockId);
+        const stock = await findStock(id);
+        if(stock.userId != user.id)
+            throw new Forbidden();
+        const quantity = stock.quantity - (stock.unitOfMeasurement == UnitOfMeasurement.PIECES ? 1 : 10);
+        if(quantity <= 0)
+            throw new UnprocessableContent();
+        await updateStockQuantity(id, quantity);
         new NoContent().send(res);
     } catch(e: any) {
         handleException(e, res);

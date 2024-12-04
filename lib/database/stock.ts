@@ -63,6 +63,21 @@ export async function findStock(id: number): Promise<Stock> {
     return stock;
 }
 
+export async function updateStockQuantity(id: number, quantity: number): Promise<Stock> {
+    try {
+        return await prisma.stock.update({
+            data: {
+                quantity: quantity
+            },
+            where: {
+                id: id
+            }
+        });
+    } catch(e: any) {
+        throw new UnprocessableContent();
+    }
+}
+
 export async function updateStock(id: number, expiration: Date, productId: number, quantity: number, unitOfMeasurement: UnitOfMeasurement, locationId: number): Promise<Stock> {
     try {
         return await prisma.stock.update({
@@ -82,7 +97,7 @@ export async function updateStock(id: number, expiration: Date, productId: numbe
     }
 }
 
-export async function deleteBook(id: number): Promise<Stock> {
+export async function deleteStock(id: number): Promise<Stock> {
     return prisma.stock.delete({
         where: {
             id: id

@@ -3,6 +3,7 @@
     --color-lighter: #333333;
     --color-foreground: #DDDDDD;
     --color-error: #F54F47;
+    --color-critical: #f58747;
     --color-warning: #F3E63D;
     --color-success: #71E0AE;
     --color-inventorymanager: #40AF8E;
@@ -74,6 +75,9 @@ input:-webkit-autofill {
     -webkit-text-fill-color: var(--color-foreground);
     -webkit-box-shadow: 0 0 0 50px var(--color-background) inset;
 }
+input.date {
+    width: 125px;
+}
 input.medium {
     width: 90px;
 }
@@ -115,6 +119,9 @@ a {
 }
 img.error {
     width: 50px;
+}
+.critical {
+    color: var(--color-critical) !important;
 }
 .warning, .warning * {
     color: var(--color-warning);

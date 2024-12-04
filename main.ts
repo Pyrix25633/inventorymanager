@@ -14,7 +14,7 @@ import { getCategoryNameFeedback, getConfirmUsernameFeedback, getLocationNameFee
 import { getLocation, getLocations, patchLocation, postLocation } from './lib/api/locations';
 import { getProduct, getProducts, patchProduct, postProduct } from './lib/api/products';
 import { getSettings, getSettingsCustomization, getSettingsId, patchSettings } from './lib/api/settings';
-import { delStock, getStock, getStocks, patchStock, postStock } from './lib/api/stocks';
+import { delStock, getStock, getStocks, patchStock, postRemoveStock, postStock } from './lib/api/stocks';
 import { postTempUser, postTempUserConfirm } from './lib/api/temp-users';
 import { settings } from './lib/settings';
 
@@ -130,6 +130,8 @@ main.patch('/api/stocks/:stockId', patchStock);
 
 main.delete('/api/stocks/:stockId', delStock);
 
+main.post('/api/stocks/:stockId/remove', postRemoveStock);
+
 // categories //
 
 main.get('/api/categories', getCategories);
@@ -231,6 +233,19 @@ main.get('/products/create', (req: Request, res: Response): void => {
 });
 main.get('/products/:productId/edit', (req: Request, res: Response): void => {
     res.sendFile(path.resolve(__dirname, './pages/product-edit.html'));
+});
+
+main.get('/stocks', (req: Request, res: Response): void => {
+    res.sendFile(path.resolve(__dirname, './pages/stocks.html'));
+});
+main.get('/stocks/create', (req: Request, res: Response): void => {
+    res.sendFile(path.resolve(__dirname, './pages/stock-create.html'));
+});
+main.get('/stocks/:stockId/edit', (req: Request, res: Response): void => {
+    res.sendFile(path.resolve(__dirname, './pages/stock-edit.html'));
+});
+main.get('/stocks/:stockId/delete', (req: Request, res: Response): void => {
+    res.sendFile(path.resolve(__dirname, './pages/stock-delete.html'));
 });
 
 main.get('/categories', (req: Request, res: Response): void => {

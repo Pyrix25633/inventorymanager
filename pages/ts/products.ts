@@ -9,7 +9,7 @@ type Product = {
     name: string;
     defaultQuantity: number;
     defaultUnitOfMeasurement: UnitOfMeasurement;
-    defaultLocation: { name: string };
+    defaultLocation: { name: string; };
 };
 
 class ProductsTable extends Table {

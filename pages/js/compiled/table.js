@@ -220,20 +220,31 @@ export class NumberTableData extends TableData {
 }
 export class QuantityTableData extends TableData {
     createTd() {
-        var _a;
         const td = super.createTd();
         if (this.value == null)
             throw new Error('Invalid Quantity!');
         td.innerText = this.value.quantity.toString() + ' ';
-        switch ((_a = this.value) === null || _a === void 0 ? void 0 : _a.unitOfMeasurement) {
+        switch (this.value.unitOfMeasurement) {
             case UnitOfMeasurement.PIECES:
-                td.innerText += 'pcs';
+                td.innerText += 'pc' + (this.value.quantity != 1 ? 's' : '');
                 break;
             case UnitOfMeasurement.GRAMS:
                 td.innerText += 'g';
                 break;
             default: td.innerText += 'ml';
         }
+        return td;
+    }
+}
+export class ExpirationTableData extends TableData {
+    createTd() {
+        if (this.value == null)
+            throw new Error('Invalid Expiration!');
+        const date = new Date(this.value);
+        const difference = (date.getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000);
+        const td = super.createTd();
+        td.innerText = date.toLocaleDateString('en-ZA');
+        td.classList.add(difference < 0 ? 'error' : (difference < 2 ? 'critical' : (difference < 7 ? 'warning' : 'success')));
         return td;
     }
 }
@@ -270,6 +281,26 @@ export class IconLinkTableData extends TableData {
             var _a, _b;
             window.location.href = this.href.replace('{id}', (_b = (_a = this.value) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : '');
         });
+        div.appendChild(img);
+        td.appendChild(div);
+        return td;
+    }
+}
+export class IconActionTableData extends TableData {
+    constructor(value, action, src) {
+        super(value);
+        this.action = action;
+        this.src = src;
+    }
+    createTd() {
+        const td = document.createElement('td');
+        const div = document.createElement('div');
+        div.classList.add('container');
+        const img = document.createElement('img');
+        img.classList.add('button');
+        img.alt = 'Link Icon';
+        img.src = this.src;
+        img.addEventListener('click', this.action);
         div.appendChild(img);
         td.appendChild(div);
         return td;
