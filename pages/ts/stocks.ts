@@ -47,7 +47,7 @@ function remove(id: number): void {
 function createRemoveTableData(element: Stock): TableData<any> {
     if((element.unitOfMeasurement == UnitOfMeasurement.PIECES && element.quantity <= 1) ||
         (element.unitOfMeasurement != UnitOfMeasurement.PIECES && element.quantity <= 10))
-        return new IconLinkTableData(element.id, '/products/{id}/delete', '/img/delete.svg');
+        return new IconLinkTableData(element.id, '/stocks/{id}/delete', '/img/delete.svg');
     return new IconActionTableData(element.id, (): void => { remove(element.id); }, '/img/remove.svg');
 }
 
