@@ -34,7 +34,7 @@ function remove(id) {
 function createRemoveTableData(element) {
     if ((element.unitOfMeasurement == UnitOfMeasurement.PIECES && element.quantity <= 1) ||
         (element.unitOfMeasurement != UnitOfMeasurement.PIECES && element.quantity <= 10))
-        return new IconLinkTableData(element.id, '/products/{id}/delete', '/img/delete.svg');
+        return new IconLinkTableData(element.id, '/stocks/{id}/delete', '/img/delete.svg');
     return new IconActionTableData(element.id, () => { remove(element.id); }, '/img/remove.svg');
 }
 class StocksTableRow extends TableRow {
