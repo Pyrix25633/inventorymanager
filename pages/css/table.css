@@ -17,3 +17,19 @@ th.group {
 td {
     text-align: center;
 }
+
+@media screen and (max-width: 800px) {
+    table {
+        display: flex;
+        flex-direction: column;
+    }
+    tr {
+        display: grid;
+    }
+    tr:nth-child(even) {
+        background-color: var(--color-background);
+    }
+    tr td {
+        background-color: #00000000 !important;
+    }
+}

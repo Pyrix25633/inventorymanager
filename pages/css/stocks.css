@@ -1,0 +1,8 @@
+@media screen and (max-width: 800px) {
+    tr {
+        grid-template-columns: auto auto auto;
+    }
+    tr > *:nth-child(-1n + 4) {
+        grid-column: span 3;
+    }
+}
