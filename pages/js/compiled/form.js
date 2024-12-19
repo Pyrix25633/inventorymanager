@@ -472,22 +472,29 @@ export class ExpirationInput extends Input {
         this.input.classList.add("date");
     }
     async parse() {
-        const expiration = this.input.value;
+        var _a;
+        let expiration = this.input.value;
         if (expiration == this.precompiledValue) {
             this.precompile(expiration);
             return expiration;
         }
-        const tokenExpirationMatch = expiration.match(/\d{4}\/\d{1,2}\/\d{1,2}/);
-        const tokenExpirationDate = new Date(expiration);
-        if (tokenExpirationMatch == null || tokenExpirationDate.toString() == 'Invalid Date' || isNaN(tokenExpirationDate.getTime())) {
-            this.setError(true, 'Invalid ' + this.feedbackText.replace('Input ', '').replace(ExpirationInput.format, ''));
+        const match = /(\d{4}\/\d{1,2}\/\d{1,2})|((\d{1,2})\/(\d{1,2})\/(?:(\d{4})|(\d{2})))/.exec(expiration);
+        if (match == null) {
+            this.setError(true, 'Invalid Format!');
+            return undefined;
+        }
+        if (match[1] == undefined)
+            expiration = ((_a = match[5]) !== null && _a !== void 0 ? _a : '20' + match[6]) + '/' + match[4] + '/' + match[3];
+        const expirationDate = new Date(expiration);
+        if (expirationDate.toString() == 'Invalid Date' || isNaN(expirationDate.getTime())) {
+            this.setError(true, 'Invalid Date!');
             return undefined;
         }
         this.setError(false, 'Valid ' + this.feedbackText.replace('Input ', '').replace(ExpirationInput.format, ''));
-        return expiration;
+        return expirationDate.getFullYear() + '/' + (expirationDate.getMonth() + 1) + '/' + expirationDate.getDate();
     }
 }
-ExpirationInput.format = '(YYYY/MM/DD)';
+ExpirationInput.format = '(YYYY/MM/DD or DD/MM/YY)';
 export class ApiFeedbackInput extends Input {
     constructor(id, type, labelText, feedbackText, url) {
         super(id, type, labelText, feedbackText);

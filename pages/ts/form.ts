@@ -569,7 +569,7 @@ export class QuantityInput extends Input<number> {
 }
 
 export class ExpirationInput extends Input<string> {
-    private static readonly format: string = '(YYYY/MM/DD)';
+    private static readonly format: string = '(YYYY/MM/DD or DD/MM/YY)';
 
     constructor(id: string, labelText: string, feedbackText: string) {
         super(id, 'text', labelText, feedbackText + ' ' + ExpirationInput.format);
@@ -577,19 +577,25 @@ export class ExpirationInput extends Input<string> {
     }
 
     async parse(): Promise<string | undefined> {
-        const expiration: string = this.input.value;
+        let expiration: string = this.input.value;
         if(expiration == this.precompiledValue) {
             this.precompile(expiration);
             return expiration;
         }
-        const tokenExpirationMatch = expiration.match(/\d{4}\/\d{1,2}\/\d{1,2}/);
-        const tokenExpirationDate = new Date(expiration);
-        if(tokenExpirationMatch == null || tokenExpirationDate.toString() == 'Invalid Date' || isNaN(tokenExpirationDate.getTime())) {
-            this.setError(true, 'Invalid ' + this.feedbackText.replace('Input ', '').replace(ExpirationInput.format, ''));
+        const match = /(\d{4}\/\d{1,2}\/\d{1,2})|((\d{1,2})\/(\d{1,2})\/(?:(\d{4})|(\d{2})))/.exec(expiration);
+        if(match == null) {
+            this.setError(true, 'Invalid Format!');
+            return undefined;
+        }
+        if(match[1] == undefined)
+            expiration = (match[5] ?? '20' + match[6]) + '/' + match[4] + '/' + match[3];
+        const expirationDate = new Date(expiration);
+        if(expirationDate.toString() == 'Invalid Date' || isNaN(expirationDate.getTime())) {
+            this.setError(true, 'Invalid Date!');
             return undefined;
         }
         this.setError(false, 'Valid ' + this.feedbackText.replace('Input ', '').replace(ExpirationInput.format, ''));
-        return expiration;
+        return expirationDate.getFullYear() + '/' + (expirationDate.getMonth() + 1) + '/' + expirationDate.getDate();
     }
 }
 
