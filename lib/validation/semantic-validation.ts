@@ -8,6 +8,7 @@ export type Order = OrderValue[];
 
 const usernameRegex = /^(?:\w|-| ){3,32}$/;
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const bulkSeparator = '~';
 
 export function getUsername(raw: any): string {
     const parsed = getString(raw);
@@ -74,6 +75,20 @@ export function getTitle(raw: any): string {
     if(parsed.length < 1 || parsed.length > 32)
         throw new BadRequest();
     return parsed;
+}
+
+export function getBulkTitle(raw: any): { bulk: false; title: string; } | { bulk: true; titles: string[]; } {
+    const parsed = getString(raw);
+    if(parsed.includes(bulkSeparator)) {
+        const titles = parsed.split(bulkSeparator);
+        for(const title of titles) {
+            getTitle(title);
+        }
+        return { bulk: true, titles: titles };
+    }
+    if(parsed.length < 1 || parsed.length > 32)
+        throw new BadRequest();
+    return { bulk: false, title: parsed };
 }
 
 export function getQuantity(raw: any): number {

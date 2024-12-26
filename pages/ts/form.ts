@@ -426,11 +426,18 @@ export class PasswordInput extends Input<string> {
 export class StringInput extends Input<string> {
     private readonly minLength: number;
     private readonly maxLength: number;
+    private readonly allowBulk: boolean;
+    private static readonly bulkSeparator: string = '~';
 
-    constructor(id: string, labelText: string, feedbackText: string, minLength: number = 1, maxLength: number = 32) {
-        super(id, 'text', labelText, feedbackText);
+    constructor(id: string, labelText: string, feedbackText: string, minLength: number = 1, maxLength: number = 32, allowBulk = false) {
+        super(id, 'text', labelText, feedbackText + (allowBulk ? ' (Bulk with \'' + StringInput.bulkSeparator + '\')' : ''));
         this.minLength = minLength;
         this.maxLength = maxLength;
+        this.allowBulk = allowBulk;
+    }
+
+    getFeedbackText(): string {
+        return this.feedbackText.replace('Input ', '').replace(' (Bulk with \'' + StringInput.bulkSeparator + '\')', '');
     }
 
     async parse(): Promise<string | undefined> {
@@ -439,15 +446,29 @@ export class StringInput extends Input<string> {
             this.precompile(value);
             return value;
         }
+        if(value.includes(StringInput.bulkSeparator) && this.allowBulk) {
+            for(const title of value.split(StringInput.bulkSeparator)) {
+                if(title.length < this.minLength) {
+                    this.setError(true, 'Bulk ' + this.getFeedbackText() + ' too short!');
+                    return undefined;
+                }
+                if(title.length > this.maxLength) {
+                    this.setError(true, 'Bulk' + this.getFeedbackText() + ' too long!');
+                    return undefined;
+                }
+                this.setError(false, 'Valid Bulk ' + this.getFeedbackText());
+                return value;
+            }
+        }
         if(value.length < this.minLength) {
-            this.setError(true, this.feedbackText.replace('Input ', '') + ' too short!');
+            this.setError(true, this.getFeedbackText() + ' too short!');
             return undefined;
         }
         if(value.length > this.maxLength) {
-            this.setError(true, this.feedbackText.replace('Input ', '') + ' too long!');
+            this.setError(true, this.getFeedbackText() + ' too long!');
             return undefined;
         }
-        this.setError(false, 'Valid ' + this.feedbackText.replace('Input ', ''));
+        this.setError(false, 'Valid ' + this.getFeedbackText());
         return value;
     }
 

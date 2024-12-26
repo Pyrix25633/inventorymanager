@@ -13,7 +13,7 @@ const categoryInput = new ApiDropdownInput('categoryId', 'Category:', '/api/cate
         statusCode: defaultStatusCode
     });
 });
-const titleInput = new StringInput('title', 'Title:', 'Input Book Title');
+const titleInput = new StringInput('title', 'Title:', 'Input Book Title', 1, 32, true);
 const locationInput = new ApiDropdownInput('locationId', 'Location:', '/api/locations');
 class CreateBookForm extends StructuredForm {
     constructor() {

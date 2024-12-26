@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { countBookPages, createBook, deleteBook, findBook, findBooks, updateBook } from "../database/book";
 import { findCategory } from "../database/category";
 import { findLocation } from "../database/location";
-import { getOrder, getTitle } from "../validation/semantic-validation";
+import { getBulkTitle, getOrder, getTitle } from "../validation/semantic-validation";
 import { getInt, getObject, getOrUndefined } from "../validation/type-validation";
 import { Created, Forbidden, handleException, NoContent, Ok, UnprocessableContent } from "../web/response";
 import { validateToken } from "./auth";
@@ -28,13 +28,23 @@ export async function postBook(req: Request, res: Response): Promise<void> {
         const category = await findCategory(categoryId);
         if(category.userId != user.id)
             throw new UnprocessableContent();
-        const title = getTitle(body.title);
+        const title = getBulkTitle(body.title);
         const locationId = getInt(body.locationId);
         const location = await findLocation(locationId);
         if(location.userId != user.id)
             throw new UnprocessableContent();
-        const book = await createBook(user.id, categoryId, title, locationId);
-        new Created({ id: book.id }).send(res);
+        if(title.bulk) {
+            const ids: number[] = [];
+            for(const t of title.titles) {
+                const book = await createBook(user.id, categoryId, t, locationId);
+                ids.push(book.id);
+            }
+            new Created({ ids: ids }).send(res);
+        }
+        else {
+            const book = await createBook(user.id, categoryId, title.title, locationId);
+            new Created({ id: book.id }).send(res);
+        }
     } catch(e: any) {
         handleException(e, res);
     }

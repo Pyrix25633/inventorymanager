@@ -1464,18 +1464,42 @@ paths:
       tags:
         - books
       summary: Creates a new book
-      description: Creates a new book
+      description: Creates a new book, bulk titles with '~'
       operationId: books(post)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                categoryId:
+                  $ref: "#/components/schemas/id"
+                title:
+                  $ref: "#/components/schemas/name"
+                locationId:
+                  $ref: "#/components/schemas/id"
+              required:
+                - categoryId
+                - title
+                - locationId
       responses:
         "201":
           description: Book created succesfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    $ref: "#/components/schemas/id"
+                oneOf:
+                  - type: object
+                    properties:
+                      id:
+                        $ref: "#/components/schemas/id"
+                  - type: object
+                    properties:
+                      ids:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/id"
         "400":
           description: Bad Request
         "401":
