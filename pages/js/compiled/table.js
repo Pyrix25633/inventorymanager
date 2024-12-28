@@ -352,7 +352,7 @@ export class TableFooter {
         this.current.id = 'page';
         this.current.classList.add('small');
         const currentInputHandler = () => {
-            table.setPage(parseInt(this.current.value));
+            table.setPage(parseInt(this.current.value) - 1);
         };
         this.current.addEventListener('keyup', () => {
             clearTimeout(this.currentInputTimeout);
