@@ -129,9 +129,9 @@ export class Button implements FormAppendable {
 export class CancelButton extends Button {
     constructor() {
         super('Cancel', '/img/cancel.svg', true);
-        const match = window.location.pathname.match(/(\/[^\/]+)+?/);
+        const match = window.location.pathname.match(/(:?(\/settings)|(\/[^\/]+))+?/);
         this.addClickListener((): void => {
-            window.location.href = match != null ? match[1] : '/';
+            window.location.href = (match != null && match[2] == undefined) ? match[1] : '/';
         });
         this.setDisabled(false);
     }

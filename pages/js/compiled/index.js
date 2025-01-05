@@ -3,6 +3,8 @@ import { loadCustomization } from "./load-customization.js";
 import { RequireNonNull } from "./utils.js";
 await loadCustomization();
 const indexDiv = RequireNonNull.getElementById('index');
+const settingsButton = new RedirectButton('Settings', '/img/settings.svg', '/settings', false);
+settingsButton.appendTo(indexDiv);
 const locationsButton = new RedirectButton('Locations', '/img/locations.svg', '/locations', false);
 locationsButton.appendTo(indexDiv);
 const productsButton = new RedirectButton('Products', '/img/products.svg', '/products', false);
